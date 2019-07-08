@@ -9,6 +9,7 @@ target 'FifthProject' do
   pod 'Firebase/Database'
   pod 'Firebase/Firestore'
   pod 'Firebase/Auth'
+  pod 'GoogleSignIn'
   pod 'RealmSwift'
   pod 'RxSwift'
   pod 'RxCocoa'

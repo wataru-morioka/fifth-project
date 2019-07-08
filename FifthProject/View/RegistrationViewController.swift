@@ -24,7 +24,9 @@ class RegistrationViewController : UIViewController, UIPickerViewDataSource, UIP
         super.viewDidLoad()
         
         regionPickerView.tag = 0
+        regionPickerView.setValue(UIColor.white, forKey: "textColor")
         agePickerView.tag = 1
+        agePickerView.setValue(UIColor.white, forKey: "textColor")
         
         Observable.just(Singleton.regions)
             .bind(to: regionPickerView.rx.itemTitles) { _, region in

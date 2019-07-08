@@ -7,12 +7,22 @@
 //
 
 import UIKit
+import Firebase
 
 class FirstViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        if Auth.auth().currentUser != nil {
+            print(Auth.auth().currentUser!.uid)
+            print(Auth.auth().currentUser!.email ?? "")
+            print("ログイン中")
+            //self.performSegue(withIdentifier: "toRegistrationView", sender: nil)
+        } else {
+            print("ログアウト")
+        }
+        
     }
 
 

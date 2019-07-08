@@ -15,6 +15,7 @@ import RealmSwift
 class RegistrationViewModel {
     let disposeBag = DisposeBag()
     let insertUserId = BehaviorRelay<String>(value: "")
+    //TODO 初期値
     let insertRegion = BehaviorRelay<String>(value: "北海道")
     let insertAge = BehaviorRelay<Int>(value: 5)
     
@@ -46,7 +47,7 @@ class RegistrationViewModel {
             "region": insertRegion.value,
             "age": insertAge.value,
         ]) { error in
-            if let error = error {
+            if let _ = error {
                 // エラー処理
                 print("error")
                 return
