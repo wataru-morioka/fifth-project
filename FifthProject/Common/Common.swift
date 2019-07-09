@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class Common {
     func getNowStringFormat() -> String {
@@ -15,4 +16,10 @@ class Common {
         return formatter.string(from: Date())
     }
     
+    func moveToView(fromView: UIWindow?, toView: String) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let initialViewController = storyboard.instantiateViewController(withIdentifier: toView)
+        fromView?.rootViewController = initialViewController
+        fromView?.makeKeyAndVisible()
+    }
 }

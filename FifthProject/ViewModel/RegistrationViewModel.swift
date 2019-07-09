@@ -14,42 +14,41 @@ import RealmSwift
 
 class RegistrationViewModel {
     let disposeBag = DisposeBag()
-    let insertUserId = BehaviorRelay<String>(value: "")
+//    let insertUserId = BehaviorRelay<String>(value: "")
     //TODO 初期値
-    let insertRegion = BehaviorRelay<String>(value: "北海道")
-    let insertAge = BehaviorRelay<Int>(value: 5)
+    var insertRegion: BehaviorRelay<String>
+    var insertAge: BehaviorRelay<Int>
     
     let db = Firestore.firestore()
     let realm = try! Realm()
     
-    init (input: (id: Observable<String>, region: Observable<String>, age: Observable<Int>)) {
-        input.id.flatMap{x -> Observable<String> in
-                            Observable.just(String(x.prefix(Singleton.maxLength)))
-                        }.bind(to: insertUserId).disposed(by: disposeBag)
+    init (input: (region: Observable<String>, age: Observable<Int>)) {
+        self.insertRegion = BehaviorRelay<String>(value: realm.objects(User.self).first?.region ?? Singleton.regions[0])
+        self.insertAge = BehaviorRelay<Int>(value: realm.objects(User.self).first?.age ?? Singleton.ages[0])
+        
+//        input.id.flatMap{x -> Observable<String> in
+//                            Observable.just(String(x.prefix(Singleton.maxLength)))
+//                        }.bind(to: insertUserId).disposed(by: disposeBag)
         input.region.bind(to: insertRegion).disposed(by: disposeBag)
         input.age.bind(to: insertAge).disposed(by: disposeBag)
     }
     
     func registerUser() -> (result: Bool, errMessage: String) {
-        print(insertUserId.value)
         print(insertRegion.value)
         print(insertAge.value)
         
-        let userId = insertUserId.value.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        if userId.isEmpty {
-            return (result: false, errMessage: "IDを入力してください")
-        }
+        let userId = Auth.auth().currentUser?.uid
         
         //firebase登録
-        db.collection("users").document(insertUserId.value).setData([
-            "userId": userId,
+        db.collection("users").document(userId!).setData([
+            "userId": userId!,
             "region": insertRegion.value,
             "age": insertAge.value,
         ]) { error in
-            if let _ = error {
+            if let error = error {
                 // エラー処理
-                print("error")
+                print("サーバエラー")
+                print(error)
                 return
             }
             // 成功したときの処理
@@ -57,7 +56,7 @@ class RegistrationViewModel {
         }
         
         let user = User()
-        user.userId = userId
+        user.userId = userId!
         user.password = "test"
         user.status = 0
         user.region = insertRegion.value
@@ -72,4 +71,24 @@ class RegistrationViewModel {
         return (result: true, errMessage: "success")
     }
     
+    func updateUser() -> (result: Bool, errMessage: String) {
+        let userId = Auth.auth().currentUser?.uid
+        //firebase登録
+        db.collection("users").document(userId!).setData([
+            "userId": userId!,
+            "region": insertRegion.value,
+            "age": insertAge.value,
+        ]) { error in
+            if let error = error {
+                // エラー処理
+                print("サーバエラー")
+                print(error)
+                return
+            }
+            // 成功したときの処理
+            print("success")
+        }
+        
+        return (result: true, errMessage: "success")
+    }
 }

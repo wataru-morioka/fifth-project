@@ -58,8 +58,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
         // ...
-        if let _ = error {
-            // ...
+        if let error = error {
+            print(error)
+            print("キャンセル")
+     
+            let realm = try! Realm()
+            let myInfo = realm.objects(User.self)
+            if myInfo.count != 0 {
+                self.window = UIWindow(frame: UIScreen.main.bounds)
+                Common().moveToView(fromView: self.window, toView: "MainViewController")
+                return
+            }
+            
             return
         }
         
@@ -68,40 +78,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                                                        accessToken: authentication.accessToken)
         // ...
         Auth.auth().signIn(with: credential) { (authResult, error) in
-            if let _ = error {
+            if let error = error {
+                print(error)
                 print("認証エラー")
                 return
             }
             print("認証OK")
             
-            self.window = UIWindow(frame: UIScreen.main.bounds)
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            var initialViewController: UIViewController
-            
             let realm = try! Realm()
             let results = realm.objects(User.self)
+            self.window = UIWindow(frame: UIScreen.main.bounds)
             if results.count == 0 {
-                initialViewController = storyboard.instantiateViewController(withIdentifier: "RegistrationViewController")
+                Common().moveToView(fromView: self.window, toView: "RegistrationViewController")
             }else{
-                initialViewController = storyboard.instantiateViewController(withIdentifier: "MainViewController")
+                Common().moveToView(fromView: self.window, toView: "MainViewController")
             }
-            
-            self.window?.rootViewController = initialViewController
-            self.window?.makeKeyAndVisible()
         }
     }
     
     func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
         // Perform any operations when the user disconnects from app here.
         // ...
+        print(error ?? "")
+        print("エラー２")
     }
     
     func sign(_ signIn: GIDSignIn!, dismiss viewController: UIViewController!) {
-        print("dismissing Google SignIn")
+        print("エラー：dismissing Google SignIn")
     }
     
     func sign(_ signIn: GIDSignIn!, present viewController: UIViewController!) {
-        print("presenting Google SignIn")
+        print("エラー：presenting Google SignIn")
     }
 }
 
