@@ -28,9 +28,9 @@ class CreateQuestionViewModel {
     let realm = try! Realm()
     
     init (input: (question: Observable<String>, answer1: Observable<String>, answer2: Observable<String>, targetNumber: Observable<Int>, timePeriod: Observable<Int>, timeUnit: Observable<String>)) {
-        input.question.map{ $0.trimmingCharacters(in: .whitespacesAndNewlines) }.bind(to: insertQuestioin).disposed(by: disposeBag)
-        input.answer1.map{ $0.trimmingCharacters(in: .whitespacesAndNewlines) }.bind(to: insertAnswer1).disposed(by: disposeBag)
-        input.answer2.map{ $0.trimmingCharacters(in: .whitespacesAndNewlines) }.bind(to: insertAnswer2).disposed(by: disposeBag)
+        input.question.bind(to: insertQuestioin).disposed(by: disposeBag)
+        input.answer1.bind(to: insertAnswer1).disposed(by: disposeBag)
+        input.answer2.bind(to: insertAnswer2).disposed(by: disposeBag)
         
         input.question.map{ q in self.checkInputString(inputString: q)
 //                            Observable.just(self.checkInputString(inputString: q))
