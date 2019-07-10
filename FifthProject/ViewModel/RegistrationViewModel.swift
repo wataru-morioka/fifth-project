@@ -16,6 +16,8 @@ class RegistrationViewModel {
     let disposeBag = DisposeBag()
     var insertRegion: BehaviorRelay<String>
     var insertAge: BehaviorRelay<Int>
+    let registerResult = PublishRelay<Bool>()
+    let updateResult = PublishRelay<Bool>()
     
     let db = Firestore.firestore()
     let realm = try! Realm()
@@ -31,13 +33,11 @@ class RegistrationViewModel {
         input.age.bind(to: insertAge).disposed(by: disposeBag)
     }
     
-    func registerUser() -> (result: Bool, errMessage: String) {
+    func registerUser() {
         print(insertRegion.value)
         print(insertAge.value)
         
         let userId = Auth.auth().currentUser?.uid
-        var result = false
-        var message = ""
         
         let now = Singleton.getNowStringFormat()
         
@@ -54,7 +54,7 @@ class RegistrationViewModel {
             if let error = error {
                 print("サーバエラー")
                 print(error)
-                message = "更新に失敗しました"
+                self.registerResult.accept(false)
                 return
             }
             print("success")
@@ -68,17 +68,13 @@ class RegistrationViewModel {
             try! self.realm.write {
                 self.realm.add(user)
             }
-            result = true
+            self.registerResult.accept(true)
         }
-        
-        return (result: result, errMessage: message)
     }
     
-    func updateUser() -> (result: Bool, errMessage: String) {
+    func updateUser() {
         let now = Singleton.getNowStringFormat()
         let userId = Auth.auth().currentUser?.uid
-        var result = false
-        var message = ""
         //firebase登録
         db.collection("users").document(userId!).updateData([
             "region": insertRegion.value,
@@ -88,7 +84,7 @@ class RegistrationViewModel {
             if let error = error {
                 print("サーバエラー")
                 print(error)
-                message = "更新に失敗しました"
+                self.updateResult.accept(false)
                 return
             }
             print("success")
@@ -99,9 +95,7 @@ class RegistrationViewModel {
                 myInfo.age = self.insertAge.value
                 myInfo.modifiedDateTime = now
             }
-            result = true
+            self.updateResult.accept(true)
         }
-        
-        return (result: result, errMessage: message)
     }
 }

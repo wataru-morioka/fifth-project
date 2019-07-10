@@ -60,12 +60,8 @@ class UserInfoViewController: UIViewController {
             onNext: { _ in
                 let alert = UIAlertController(title: "登録確認", message: "本当に登録しますか？", preferredStyle: UIAlertController.Style.alert)
                 let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
-                    let resultObj = viewModel.updateUser()
-                    if resultObj.result {
-                        self.showAlert(title: "更新完了", message: "更新に成功しました")
-                        return
-                    }
-                    self.showAlert(title: "エラー", message: resultObj.errMessage)
+                    self.updateButton.rx.isEnabled.onNext(false)
+                    viewModel.updateUser()
                 }
                 let ng = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel, handler: nil)
                 alert.addAction(ok)
@@ -79,6 +75,18 @@ class UserInfoViewController: UIViewController {
             , onCompleted: {
                 print("complete")
         }).disposed(by: disposeBag)
+        
+        viewModel.updateResult.subscribe(onNext: { result in
+                self.showAlert(title: "更新完了", message: "更新に成功しました")
+            }
+            , onError: { _ in
+                print("error")
+                self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
+                self.updateButton.rx.isEnabled.onNext(true)
+            }
+            , onCompleted: {
+                print("complete")
+        }).disposed(by: self.disposeBag)
     }
     
     @objc func swipeRight(sender:UISwipeGestureRecognizer) {

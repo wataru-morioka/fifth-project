@@ -26,6 +26,18 @@ class CreateQuestionTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let swipeL = UISwipeGestureRecognizer()
+        swipeL.direction = .left
+        swipeL.numberOfTouchesRequired = 1
+        swipeL.addTarget(self, action: #selector(self.swipeLeft(sender:)))
+        self.view.addGestureRecognizer(swipeL)
+        
+        let swipeR = UISwipeGestureRecognizer()
+        swipeR.direction = .right
+        swipeR.numberOfTouchesRequired = 1
+        swipeR.addTarget(self, action: #selector(self.swipeRight(sender:)))
+        self.view.addGestureRecognizer(swipeR)
+        
         targetNumberPickerView.tag = 0
         timeUnitPickerView.tag = 1
         timePeriodPickerView.tag = 2
@@ -56,15 +68,15 @@ class CreateQuestionTableViewController: UITableViewController {
             return String(minute)
             }
             .disposed(by: disposeBag)
+        viewModel.insertQuestioin.bind(to: questionView.rx.text).disposed(by: disposeBag)
+        viewModel.insertAnswer1.bind(to: answer1View.rx.text).disposed(by: disposeBag)
+        viewModel.insertAnswer2.bind(to: answer2View.rx.text).disposed(by: disposeBag)
         
         targetNumberPickerView.selectRow(19, inComponent: 0, animated: true)
         timePeriodPickerView.selectRow(4, inComponent: 0, animated: true)
         
         submitButton.rx.tap.subscribe(
             onNext: { _ in
-//                print(viewModel.test.value)
-//                print(viewModel.test2.value)
-//                print(viewModel.test3.value)
                 if !viewModel.isValid.value {
                     self.showAlert(title: "入力エラー", message: "入力していない項目があります")
                     return
@@ -72,37 +84,28 @@ class CreateQuestionTableViewController: UITableViewController {
                 
                 let alert = UIAlertController(title: "送信確認", message: "本当に送信しますか？", preferredStyle: UIAlertController.Style.alert)
                 let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
-                    let resultObj = viewModel.submitQuestion()
-                    if resultObj.result {
-                         self.showAlert(title: "送信完了", message: "送信が完了しました")
-                        return
-                    }
-                    self.showAlert(title: "エラー", message: resultObj.errMessage)
+                    self.submitButton.rx.isEnabled.onNext(false)
+                    viewModel.submitQuestion()
+//                    self.performSegue(withIdentifier: "toIndicatorView", sender: nil)
                 }
                 let ng = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel, handler: nil)
                 alert.addAction(ok)
                 alert.addAction(ng)
                 self.present(alert, animated: true, completion: nil)
+        }).disposed(by: disposeBag)
+        
+        viewModel.submitResult.subscribe(onNext: { result in
+                self.showAlert(title: "送信完了", message: "送信が完了しました")
+                self.submitButton.rx.isEnabled.onNext(true)
             }
             , onError: { _ in
                 print("error")
-                self.showAlert(title: "エラー", message: "サーバに接続できません")
+                self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
+                self.submitButton.rx.isEnabled.onNext(true)
             }
             , onCompleted: {
                 print("complete")
-        }).disposed(by: disposeBag)
-        
-        let swipeL = UISwipeGestureRecognizer()
-        swipeL.direction = .left
-        swipeL.numberOfTouchesRequired = 1
-        swipeL.addTarget(self, action: #selector(self.swipeLeft(sender:)))
-        self.view.addGestureRecognizer(swipeL)
-        
-        let swipeR = UISwipeGestureRecognizer()
-        swipeR.direction = .right
-        swipeR.numberOfTouchesRequired = 1
-        swipeR.addTarget(self, action: #selector(self.swipeRight(sender:)))
-        self.view.addGestureRecognizer(swipeR)
+        }).disposed(by: self.disposeBag)
     }
     
     private func showAlert(title: String, message: String) {

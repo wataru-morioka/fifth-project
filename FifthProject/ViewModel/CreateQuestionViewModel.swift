@@ -21,11 +21,8 @@ class CreateQuestionViewModel {
     let insertTimtPeriod = BehaviorRelay<Int>(value: 5)
     let insertTimeUnit = BehaviorRelay<Int>(value: 60)
     let isValid = BehaviorRelay<Bool>(value: false)
+    let submitResult = PublishRelay<Bool>()
     var timePeriodArray = BehaviorRelay<[Int]>(value: ([Int])(1...60))
-    
-//    let test = BehaviorRelay<Bool>(value: false)
-//    let test2 = BehaviorRelay<Bool>(value: false)
-//    let test3 = BehaviorRelay<Bool>(value: false)
     
     let db = Firestore.firestore()
     let realm = try! Realm()
@@ -57,9 +54,15 @@ class CreateQuestionViewModel {
         }.bind(to: timePeriodArray)
         .disposed(by: disposeBag)
         
-//        input.question.map {self.checkInputString(inputString: $0)}.bind(to: test).disposed(by: disposeBag)
-//        input.answer1.map {self.checkInputString(inputString: $0)}.bind(to: test2).disposed(by: disposeBag)
-//        input.answer2.map {self.checkInputString(inputString: $0)}.bind(to: test3).disposed(by: disposeBag)
+//        db.collection("questions").whereField("uid", isEqualTo: Auth.auth().currentUser!.uid)
+//            .addSnapshotListener { querySnapshot, error in
+//                guard let documents = querySnapshot?.documents else {
+//                    print("Error fetching documents: \(error!)")
+//                    return
+//                }
+//                let time = documents.map { $0["createdDateTime"]! }
+//                print(String(format: "検知成功：%@", time))
+//        }
     }
     
     func checkInputString(inputString: String) -> Bool {
@@ -70,14 +73,11 @@ class CreateQuestionViewModel {
         return true
     }
     
-    func submitQuestion() -> (result: Bool, errMessage: String) {
+    func submitQuestion() {
         print(insertTargetNumber.value)
         print(insertTimtPeriod.value)
         print(insertTimeUnit.value)
         let userId = Auth.auth().currentUser?.uid
-        var result = false
-        var message = ""
-        
         let now = Singleton.getNowStringFormat()
         
         //TODO オフラインの場合考慮
@@ -92,7 +92,6 @@ class CreateQuestionViewModel {
         
         //firebase登録
         db.collection("questions").addDocument(data: [
-            "seq": FieldValue.increment(1.0),
             "uid": userId!,
             "questionId": questionId!,
             "question": insertQuestioin.value,
@@ -100,19 +99,26 @@ class CreateQuestionViewModel {
             "answer2": insertAnswer2.value,
             "answer1number": 0,
             "answer2number": 0,
-            "targetNumber": 10,
-            "timePeriod": 5,
+            "targetNumber": insertTargetNumber.value,
+            "timePeriod": insertTimtPeriod.value * insertTimeUnit.value,
             "timeLimit": "",
+            "askFlag": false,
+            "determinationFlag": false,
+            "finalPushFlag": false,
+            "resultReceiveFlag": false,
             "createdDateTime": now,
             "modifiedDateTime": ""
         ]) { error in
             if let error = error {
                 print("サーバエラー")
                 print(error)
-                message = "更新に失敗しました"
+                self.submitResult.accept(false)
                 return
             }
             print("success")
+            self.insertQuestioin.accept("")
+            self.insertAnswer1.accept("")
+            self.insertAnswer2.accept("")
 //            let question = Question()
 //            question.createdDateTime = Singleton.getNowStringFormat()
 //
@@ -120,9 +126,7 @@ class CreateQuestionViewModel {
 //            try! self.realm.write {
 //                self.realm.add(question)
 //            }
-            result = true
+            self.submitResult.accept(true)
         }
-        
-        return (result: result, errMessage: message)
     }
 }

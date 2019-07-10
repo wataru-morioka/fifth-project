@@ -41,24 +41,17 @@ class RegistrationViewController : UIViewController {
             .disposed(by: disposeBag)
         
         let viewModel = RegistrationViewModel(input: (
-//            id: authentication.rx.text.orEmpty.asObservable(),
             region: regionPickerView.rx.modelSelected(String.self).asObservable().map{ $0.first! },
             age: agePickerView.rx.modelSelected(Int.self).asObservable().map{ $0.first! }
             )
         )
         
-//        viewModel.insertUserId.bind(to: authentication.rx.text).disposed(by: disposeBag)
-        
         registerButton.rx.tap.subscribe(
             onNext: { _ in
                 let alert = UIAlertController(title: "登録確認", message: "本当に登録しますか？", preferredStyle: UIAlertController.Style.alert)
                 let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
-                    let resultObj = viewModel.registerUser()
-                    if resultObj.result {
-                        self.performSegue(withIdentifier: "toMainView", sender: nil)
-                        return
-                    }
-                    self.showAlert(title: "エラー", message: resultObj.errMessage)
+                    self.registerButton.rx.isEnabled.onNext(false)
+                    viewModel.registerUser()
                 }
                 let ng = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel, handler: nil)
                 alert.addAction(ok)
@@ -72,6 +65,19 @@ class RegistrationViewController : UIViewController {
             , onCompleted: {
                 print("complete")
         }).disposed(by: disposeBag)
+        
+        viewModel.registerResult.subscribe(onNext: { result in
+                self.showAlert(title: "送信完了", message: "送信が完了しました")
+                self.performSegue(withIdentifier: "toMainView", sender: nil)
+            }
+            , onError: { _ in
+                print("error")
+                self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
+                self.registerButton.rx.isEnabled.onNext(true)
+            }
+            , onCompleted: {
+                print("complete")
+        }).disposed(by: self.disposeBag)
     }
     
     private func showAlert(title: String, message: String) {
@@ -84,28 +90,4 @@ class RegistrationViewController : UIViewController {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         hideKeyboard()
     }
-    
-//    // UIPickerViewの列の数
-//    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-//        return 1
-//    }
-//
-//    // UIPickerViewの行数、リストの数
-//    func pickerView(_ pickerView: UIPickerView,
-//                    numberOfRowsInComponent component: Int) -> Int {
-//        if (pickerView.tag == 0){
-//            return Singleton.regions.count
-//        }
-//        return Singleton.ages.count
-//    }
-//
-//    // UIPickerViewの最初の表示
-//    func pickerView(_ pickerView: UIPickerView,
-//                    titleForRow row: Int,
-//                    forComponent component: Int) -> String? {
-//        if (pickerView.tag == 0){
-//            return  Singleton.regions[row]
-//        }
-//        return String(Singleton.ages[row])
-//    }
 }
