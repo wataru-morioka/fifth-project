@@ -7,28 +7,90 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 import Firebase
 
 class CreateQuestionTableViewController: UITableViewController {
 
 //    @IBOutlet weak var questionSection: UITableViewSection!
-    
-    @IBOutlet weak var inputQuestion: UITextField!
-    @IBOutlet weak var inputAnswer1: UITextField!
-    @IBOutlet weak var inputAnswer2: UITextField!
+    @IBOutlet weak var questionView: UITextView!
+    @IBOutlet weak var answer1View: UITextView!
+    @IBOutlet weak var answer2View: UITextView!
     @IBOutlet weak var submitButton: UIButton!
+    @IBOutlet weak var targetNumberPickerView: UIPickerView!
+    @IBOutlet weak var timeUnitPickerView: UIPickerView!
+    @IBOutlet weak var timePeriodPickerView: UIPickerView!
+    let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        if Auth.auth().currentUser != nil {
-            print(Auth.auth().currentUser!.uid)
-            print(Auth.auth().currentUser!.email ?? "")
-            print("ログイン中")
-            //self.performSegue(withIdentifier: "toRegistrationView", sender: nil)
-        } else {
-            print("ログアウト")
-        }
+        
+        targetNumberPickerView.tag = 0
+        timeUnitPickerView.tag = 1
+        timePeriodPickerView.tag = 2
+        
+        Observable.just(Singleton.targetNumbers)
+            .bind(to: targetNumberPickerView.rx.itemTitles) { _, targetNumber in
+                return String(targetNumber)
+            }
+            .disposed(by: disposeBag)
+        
+        Observable.just(Singleton.timeUnits)
+            .bind(to: timeUnitPickerView.rx.itemTitles) { _, unit in
+                return unit
+            }
+            .disposed(by: disposeBag)
+        
+        let viewModel = CreateQuestionViewModel(input: (
+            question: questionView.rx.text.orEmpty.asObservable(),
+            answer1: answer1View.rx.text.orEmpty.asObservable(),
+            answer2: answer2View.rx.text.orEmpty.asObservable(),
+            targetNumber: targetNumberPickerView.rx.modelSelected(Int.self).asObservable().map{ $0.first! },
+            timePeriod: timePeriodPickerView.rx.modelSelected(Int.self).asObservable().map{ $0.first! },
+            timeUnit: timeUnitPickerView.rx.modelSelected(String.self).asObservable().map{ $0.first! }
+            )
+        )
+        
+        viewModel.timePeriodArray.bind(to: timePeriodPickerView.rx.itemTitles) { _, minute in
+            return String(minute)
+            }
+            .disposed(by: disposeBag)
+        
+        targetNumberPickerView.selectRow(19, inComponent: 0, animated: true)
+        timePeriodPickerView.selectRow(4, inComponent: 0, animated: true)
+        
+        submitButton.rx.tap.subscribe(
+            onNext: { _ in
+//                print(viewModel.test.value)
+//                print(viewModel.test2.value)
+//                print(viewModel.test3.value)
+                if !viewModel.isValid.value {
+                    self.showAlert(title: "入力エラー", message: "入力していない項目があります")
+                    return
+                }
+                
+                let alert = UIAlertController(title: "送信確認", message: "本当に送信しますか？", preferredStyle: UIAlertController.Style.alert)
+                let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
+                    let resultObj = viewModel.submitQuestion()
+                    if resultObj.result {
+                         self.showAlert(title: "送信完了", message: "送信が完了しました")
+                        return
+                    }
+                    self.showAlert(title: "エラー", message: resultObj.errMessage)
+                }
+                let ng = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel, handler: nil)
+                alert.addAction(ok)
+                alert.addAction(ng)
+                self.present(alert, animated: true, completion: nil)
+            }
+            , onError: { _ in
+                print("error")
+                self.showAlert(title: "エラー", message: "サーバに接続できません")
+            }
+            , onCompleted: {
+                print("complete")
+        }).disposed(by: disposeBag)
         
         let swipeL = UISwipeGestureRecognizer()
         swipeL.direction = .left
@@ -43,6 +105,13 @@ class CreateQuestionTableViewController: UITableViewController {
         self.view.addGestureRecognizer(swipeR)
     }
     
+    private func showAlert(title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        let ok = UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil)
+        alert.addAction(ok)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     @objc func swipeLeft(sender:UISwipeGestureRecognizer) {
         self.tabBarController?.selectedIndex = 3
     }
@@ -51,7 +120,24 @@ class CreateQuestionTableViewController: UITableViewController {
         self.tabBarController?.selectedIndex = 1
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    @objc func tapHeader(sender: UITapGestureRecognizer) {
         hideKeyboard()
+    }
+    
+    //Headerが表示される時の処理
+    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        guard let header = view as? UITableViewHeaderFooterView else { return }
+        //Headerのラベルの文字色を設定
+        header.textLabel?.textColor = UIColor.orange
+        header.textLabel?.font = UIFont.systemFont(ofSize: 15)
+        //Headerの背景色を設定
+        header.contentView.backgroundColor = UIColor.black
+        header.isUserInteractionEnabled = true
+        header.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapHeader(sender:))))
+    }
+    
+    // UIPickerViewの列の数
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
     }
 }

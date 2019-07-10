@@ -26,9 +26,7 @@ class UserInfoViewController: UIViewController {
         authentication.text = Auth.auth().currentUser?.email ?? Auth.auth().currentUser?.phoneNumber
         
         regionPickerView.tag = 0
-        regionPickerView.setValue(UIColor.white, forKey: "textColor")
         agePickerView.tag = 1
-        agePickerView.setValue(UIColor.white, forKey: "textColor")
         
         Observable.just(Singleton.regions)
             .bind(to: regionPickerView.rx.itemTitles) { _, region in
@@ -43,7 +41,6 @@ class UserInfoViewController: UIViewController {
             .disposed(by: disposeBag)
         
         let viewModel = RegistrationViewModel(input: (
-            //            id: authentication.rx.text.orEmpty.asObservable(),
             region: regionPickerView.rx.modelSelected(String.self).asObservable().map{x in return x.first!},
             age: agePickerView.rx.modelSelected(Int.self).asObservable().map{x in return x.first!}
             )
@@ -63,11 +60,12 @@ class UserInfoViewController: UIViewController {
             onNext: { _ in
                 let alert = UIAlertController(title: "登録確認", message: "本当に登録しますか？", preferredStyle: UIAlertController.Style.alert)
                 let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
-                    if viewModel.updateUser().result {
+                    let resultObj = viewModel.updateUser()
+                    if resultObj.result {
                         self.showAlert(title: "更新完了", message: "更新に成功しました")
                         return
                     }
-                    self.showAlert(title: "エラー", message: viewModel.registerUser().errMessage)
+                    self.showAlert(title: "エラー", message: resultObj.errMessage)
                 }
                 let ng = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel, handler: nil)
                 alert.addAction(ok)
@@ -108,17 +106,6 @@ class UserInfoViewController: UIViewController {
         return Singleton.ages.count
     }
     
-//    // UIPickerViewの最初の表示
-//    func pickerView(_ pickerView: UIPickerView,
-//                    titleForRow row: Int,
-//                    forComponent component: Int) -> String? {
-//        let realm = try! Realm()
-//        let myInfo = realm.objects(User.self)
-//        if (pickerView.tag == 0){
-//            return  myInfo.first!.region
-//        }
-//        return String(myInfo.first!.age)
-//    }
     /*
     // MARK: - Navigation
 

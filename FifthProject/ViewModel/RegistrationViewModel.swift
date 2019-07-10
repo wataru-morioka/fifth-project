@@ -14,8 +14,6 @@ import RealmSwift
 
 class RegistrationViewModel {
     let disposeBag = DisposeBag()
-//    let insertUserId = BehaviorRelay<String>(value: "")
-    //TODO 初期値
     var insertRegion: BehaviorRelay<String>
     var insertAge: BehaviorRelay<Int>
     
@@ -38,57 +36,72 @@ class RegistrationViewModel {
         print(insertAge.value)
         
         let userId = Auth.auth().currentUser?.uid
+        var result = false
+        var message = ""
+        
+        let now = Singleton.getNowStringFormat()
         
         //firebase登録
         db.collection("users").document(userId!).setData([
-            "userId": userId!,
+            "uid": userId!,
             "region": insertRegion.value,
             "age": insertAge.value,
+            "token": "",
+            "deleteFlag": false,
+            "createdDateTime": now,
+            "modifiedDateTime": ""
         ]) { error in
             if let error = error {
-                // エラー処理
                 print("サーバエラー")
                 print(error)
+                message = "更新に失敗しました"
                 return
             }
-            // 成功したときの処理
             print("success")
+            let user = User()
+            user.uid = userId!
+            user.region = self.insertRegion.value
+            user.age = self.insertAge.value
+            user.createdDateTime = Singleton.getNowStringFormat()
+            
+            //Realm登録
+            try! self.realm.write {
+                self.realm.add(user)
+            }
+            result = true
         }
         
-        let user = User()
-        user.userId = userId!
-        user.password = "test"
-        user.status = 0
-        user.region = insertRegion.value
-        user.age = insertAge.value
-        user.createdDateTime = Singleton.getNowStringFormat()
-        
-        //Realm登録
-        try! realm.write {
-            realm.add(user)
-        }
-        
-        return (result: true, errMessage: "success")
+        return (result: result, errMessage: message)
     }
     
     func updateUser() -> (result: Bool, errMessage: String) {
+        let now = Singleton.getNowStringFormat()
         let userId = Auth.auth().currentUser?.uid
+        var result = false
+        var message = ""
         //firebase登録
-        db.collection("users").document(userId!).setData([
-            "userId": userId!,
+        db.collection("users").document(userId!).updateData([
             "region": insertRegion.value,
             "age": insertAge.value,
+            "modifiedDateTime": now
         ]) { error in
             if let error = error {
-                // エラー処理
                 print("サーバエラー")
                 print(error)
+                message = "更新に失敗しました"
                 return
             }
-            // 成功したときの処理
             print("success")
+            let relam = try! Realm()
+            let myInfo = relam.objects(User.self).first!
+            try! self.realm.write {
+                myInfo.region = self.insertRegion.value
+                myInfo.age = self.insertAge.value
+                myInfo.modifiedDateTime = now
+            }
+            result = true
         }
         
-        return (result: true, errMessage: "success")
+        return (result: result, errMessage: message)
     }
 }

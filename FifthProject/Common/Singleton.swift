@@ -19,6 +19,28 @@ class Singleton {
     
     static let ages = ([Int])(5...120)
     
+    static let targetNumbers = ([Int])(1...100)
+
+    static let timeUnits = [ "分", "時間", "日" ]
+    
+    static let minutes = ([Int])(1...60)
+    
+    static let hours = ([Int])(1...24)
+    
+    static let days = ([Int])(1...3)
+    
+    static let timeUnitDictionary: [String: Int] = [
+    "分": 1,
+    "時間": 60,
+    "日" : 1440
+    ]
+    
+    static let timePeriodDictionary: [String: [Int]] = [
+    "分": minutes,
+    "時間": hours,
+    "日" : days
+    ]
+    
     static let maxLength = 15
     
     static func getNowStringFormat() -> String {
