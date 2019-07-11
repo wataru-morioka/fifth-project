@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DetailOthersQuestionViewController: UIViewController {
+class DetailOthersQuestionViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

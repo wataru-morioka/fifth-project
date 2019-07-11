@@ -43,6 +43,9 @@ class Singleton {
     
     static let maxLength = 15
     
+    static let own = "own"
+    static let others = "others"
+    
     static func getNowStringFormat() -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd' 'HH:mm:ss"

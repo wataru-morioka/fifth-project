@@ -22,9 +22,11 @@ class Question: BaseModel, Codable {
     @objc dynamic var decision: Int = 0
     @objc dynamic var targetNumber: Int = 0
     @objc dynamic var timePeriod: Int = 0
+    @objc dynamic var timeUnit: String = ""
     @objc dynamic var timeLimit: String?
     @objc dynamic var confirmationFlag: Bool = false
     @objc dynamic var determinationFlag: Bool = false
+    @objc dynamic var deleteFlag: Bool = false
     @objc dynamic var createdDateTime: String = ""
     @objc dynamic var modifiedDateTime: String?
 //    // プライマリキーの定義

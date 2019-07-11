@@ -20,9 +20,11 @@ class CreateQuestionViewModel {
     let insertTargetNumber = BehaviorRelay<Int>(value: 3)
     let insertTimtPeriod = BehaviorRelay<Int>(value: 5)
     let insertTimeUnit = BehaviorRelay<Int>(value: 1)
+    let timeUnit = BehaviorRelay<String>(value: "")
     let isValid = BehaviorRelay<Bool>(value: false)
     let submitResult = PublishRelay<Bool>()
     var timePeriodArray = BehaviorRelay<[Int]>(value: ([Int])(1...60))
+    
     
     let test = BehaviorRelay<Bool>(value: false)
     let test2 = BehaviorRelay<Bool>(value: false)
@@ -42,6 +44,7 @@ class CreateQuestionViewModel {
         input.targetNumber.bind(to: insertTargetNumber).disposed(by: disposeBag)
         input.timePeriod.bind(to: insertTimtPeriod).disposed(by: disposeBag)
         
+        input.timeUnit.bind(to: timeUnit).disposed(by: disposeBag)
         input.timeUnit.map{ unit in
             Singleton.timeUnitDictionary[unit]!
         }.bind(to: insertTimeUnit)
@@ -90,11 +93,13 @@ class CreateQuestionViewModel {
         //TODO オフラインの場合考慮
         let question = Question()
         question.uid = userId!
+        question.owner = Singleton.own
         question.question = insertQuestioin.value.trimingLeftRight()
         question.answer1 = insertAnswer1.value.trimingLeftRight()
         question.answer2 = insertAnswer2.value.trimingLeftRight()
         question.targetNumber = insertTargetNumber.value
-        question.timePeriod = insertTimtPeriod.value * insertTimeUnit.value
+        question.timePeriod = insertTimtPeriod.value
+        question.timeUnit = timeUnit.value
         question.createdDateTime = now
 
         //Realm登録

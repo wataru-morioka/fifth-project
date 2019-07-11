@@ -85,8 +85,7 @@ class RegistrationViewModel {
                 return
             }
             print("success")
-            let relam = try! Realm()
-            let myInfo = relam.objects(User.self).first!
+            let myInfo = self.realm.objects(User.self).first!
             try! self.realm.write {
                 myInfo.region = self.insertRegion.value
                 myInfo.age = self.insertAge.value
