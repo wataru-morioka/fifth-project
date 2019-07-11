@@ -21,6 +21,7 @@ class CreateQuestionTableViewController: UITableViewController {
     @IBOutlet weak var targetNumberPickerView: UIPickerView!
     @IBOutlet weak var timeUnitPickerView: UIPickerView!
     @IBOutlet weak var timePeriodPickerView: UIPickerView!
+    @IBOutlet weak var indicator: UIActivityIndicatorView!
     let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -72,7 +73,7 @@ class CreateQuestionTableViewController: UITableViewController {
         viewModel.insertAnswer1.bind(to: answer1View.rx.text).disposed(by: disposeBag)
         viewModel.insertAnswer2.bind(to: answer2View.rx.text).disposed(by: disposeBag)
         
-        targetNumberPickerView.selectRow(19, inComponent: 0, animated: true)
+        targetNumberPickerView.selectRow(2, inComponent: 0, animated: true)
         timePeriodPickerView.selectRow(4, inComponent: 0, animated: true)
         
         submitButton.rx.tap.subscribe(
@@ -85,8 +86,8 @@ class CreateQuestionTableViewController: UITableViewController {
                 let alert = UIAlertController(title: "送信確認", message: "本当に送信しますか？", preferredStyle: UIAlertController.Style.alert)
                 let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
                     self.submitButton.rx.isEnabled.onNext(false)
+                    self.indicator.startAnimating()
                     viewModel.submitQuestion()
-//                    self.performSegue(withIdentifier: "toIndicatorView", sender: nil)
                 }
                 let ng = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel, handler: nil)
                 alert.addAction(ok)
@@ -97,11 +98,13 @@ class CreateQuestionTableViewController: UITableViewController {
         viewModel.submitResult.subscribe(onNext: { result in
                 self.showAlert(title: "送信完了", message: "送信が完了しました")
                 self.submitButton.rx.isEnabled.onNext(true)
+                self.indicator.stopAnimating()
             }
             , onError: { _ in
                 print("error")
                 self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
                 self.submitButton.rx.isEnabled.onNext(true)
+                self.indicator.stopAnimating()
             }
             , onCompleted: {
                 print("complete")

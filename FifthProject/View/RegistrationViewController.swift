@@ -18,6 +18,7 @@ class RegistrationViewController : UIViewController {
     @IBOutlet weak var regionPickerView: UIPickerView!
     @IBOutlet weak var agePickerView: UIPickerView!
     @IBOutlet weak var registerButton: UIButton!
+    @IBOutlet weak var indicator: UIActivityIndicatorView!
     let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
@@ -51,6 +52,7 @@ class RegistrationViewController : UIViewController {
                 let alert = UIAlertController(title: "登録確認", message: "本当に登録しますか？", preferredStyle: UIAlertController.Style.alert)
                 let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
                     self.registerButton.rx.isEnabled.onNext(false)
+                    self.indicator.startAnimating()
                     viewModel.registerUser()
                 }
                 let ng = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel, handler: nil)
@@ -67,13 +69,19 @@ class RegistrationViewController : UIViewController {
         }).disposed(by: disposeBag)
         
         viewModel.registerResult.subscribe(onNext: { result in
-                self.showAlert(title: "送信完了", message: "送信が完了しました")
-                self.performSegue(withIdentifier: "toMainView", sender: nil)
+                self.indicator.stopAnimating()
+                let alert = UIAlertController(title: "登録完了", message: "登録が完了しました", preferredStyle: UIAlertController.Style.alert)
+                let ok = UIAlertAction(title: "OK", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
+                    self.performSegue(withIdentifier: "toMainView", sender: nil)
+                }
+                alert.addAction(ok)
+                self.present(alert, animated: true, completion: nil)
             }
             , onError: { _ in
                 print("error")
                 self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
                 self.registerButton.rx.isEnabled.onNext(true)
+                self.indicator.stopAnimating()
             }
             , onCompleted: {
                 print("complete")

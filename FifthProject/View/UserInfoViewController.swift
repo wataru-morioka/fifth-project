@@ -18,6 +18,7 @@ class UserInfoViewController: UIViewController {
     @IBOutlet weak var regionPickerView: UIPickerView!
     @IBOutlet weak var agePickerView: UIPickerView!
     @IBOutlet weak var updateButton: UIButton!
+    @IBOutlet weak var indicator: UIActivityIndicatorView!
     let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -61,6 +62,7 @@ class UserInfoViewController: UIViewController {
                 let alert = UIAlertController(title: "登録確認", message: "本当に登録しますか？", preferredStyle: UIAlertController.Style.alert)
                 let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
                     self.updateButton.rx.isEnabled.onNext(false)
+                    self.indicator.startAnimating()
                     viewModel.updateUser()
                 }
                 let ng = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel, handler: nil)
@@ -78,11 +80,14 @@ class UserInfoViewController: UIViewController {
         
         viewModel.updateResult.subscribe(onNext: { result in
                 self.showAlert(title: "更新完了", message: "更新に成功しました")
+                self.updateButton.rx.isEnabled.onNext(true)
+                self.indicator.stopAnimating()
             }
             , onError: { _ in
                 print("error")
                 self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
                 self.updateButton.rx.isEnabled.onNext(true)
+                self.indicator.stopAnimating()
             }
             , onCompleted: {
                 print("complete")

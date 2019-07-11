@@ -26,9 +26,6 @@ class RegistrationViewModel {
         self.insertRegion = BehaviorRelay<String>(value: realm.objects(User.self).first?.region ?? Singleton.regions[0])
         self.insertAge = BehaviorRelay<Int>(value: realm.objects(User.self).first?.age ?? Singleton.ages[0])
         
-//        input.id.flatMap{x -> Observable<String> in
-//                            Observable.just(String(x.prefix(Singleton.maxLength)))
-//                        }.bind(to: insertUserId).disposed(by: disposeBag)
         input.region.bind(to: insertRegion).disposed(by: disposeBag)
         input.age.bind(to: insertAge).disposed(by: disposeBag)
     }
@@ -97,5 +94,21 @@ class RegistrationViewModel {
             }
             self.updateResult.accept(true)
         }
+        
+//        //firebase登録
+//        db.collection("users").document("K").setData([
+//            "uid": "K",
+//            "region": insertRegion.value,
+//            "age": insertAge.value,
+//            "token": "",
+//            "deleteFlag": false,
+//            "createdDateTime": now,
+//            "modifiedDateTime": ""
+//        ]) { error in
+//            if let _ = error {
+//                return
+//            }
+//            print("success")
+//        }
     }
 }

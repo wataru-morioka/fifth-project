@@ -17,12 +17,16 @@ class CreateQuestionViewModel {
     let insertQuestioin = BehaviorRelay<String>(value: "")
     let insertAnswer1 = BehaviorRelay<String>(value: "")
     let insertAnswer2 = BehaviorRelay<String>(value: "")
-    let insertTargetNumber = BehaviorRelay<Int>(value: 20)
+    let insertTargetNumber = BehaviorRelay<Int>(value: 3)
     let insertTimtPeriod = BehaviorRelay<Int>(value: 5)
-    let insertTimeUnit = BehaviorRelay<Int>(value: 60)
+    let insertTimeUnit = BehaviorRelay<Int>(value: 1)
     let isValid = BehaviorRelay<Bool>(value: false)
     let submitResult = PublishRelay<Bool>()
     var timePeriodArray = BehaviorRelay<[Int]>(value: ([Int])(1...60))
+    
+    let test = BehaviorRelay<Bool>(value: false)
+    let test2 = BehaviorRelay<Bool>(value: false)
+    let test3 = BehaviorRelay<Bool>(value: false)
     
     let db = Firestore.firestore()
     let realm = try! Realm()
@@ -31,15 +35,9 @@ class CreateQuestionViewModel {
         input.question.bind(to: insertQuestioin).disposed(by: disposeBag)
         input.answer1.bind(to: insertAnswer1).disposed(by: disposeBag)
         input.answer2.bind(to: insertAnswer2).disposed(by: disposeBag)
-        
-        input.question.map{ q in self.checkInputString(inputString: q)
-//                            Observable.just(self.checkInputString(inputString: q))
-                        }.flatMap { tmpResult -> Observable<Bool> in
-                            input.answer1.map{ a1 in self.checkInputString(inputString: a1) && tmpResult}
-                        }.flatMap { tmpResult -> Observable<Bool>  in
-                            input.answer2.map{ a1 in self.checkInputString(inputString: a1) && tmpResult}
-                        }.bind(to: isValid)
-                        .disposed(by: disposeBag)
+        bindIsValid(inputArea: input.question)
+        bindIsValid(inputArea: input.answer1)
+        bindIsValid(inputArea: input.answer2)
         
         input.targetNumber.bind(to: insertTargetNumber).disposed(by: disposeBag)
         input.timePeriod.bind(to: insertTimtPeriod).disposed(by: disposeBag)
@@ -63,6 +61,18 @@ class CreateQuestionViewModel {
 //                let time = documents.map { $0["createdDateTime"]! }
 //                print(String(format: "検知成功：%@", time))
 //        }
+//
+    }
+    
+    func bindIsValid(inputArea: Observable<String>) {
+        inputArea.flatMap{ i -> Observable<Bool> in
+                self.insertQuestioin.map{ q in self.checkInputString(inputString: q) }
+            }.flatMap { tmpResult -> Observable<Bool> in
+                self.insertAnswer1.map{ a1 in self.checkInputString(inputString: a1) && tmpResult}
+            }.flatMap { tmpResult -> Observable<Bool>  in
+                self.insertAnswer2.map{ a2 in self.checkInputString(inputString: a2) && tmpResult}
+            }.bind(to: isValid)
+            .disposed(by: disposeBag)
     }
     
     func checkInputString(inputString: String) -> Bool {
@@ -74,15 +84,18 @@ class CreateQuestionViewModel {
     }
     
     func submitQuestion() {
-        print(insertTargetNumber.value)
-        print(insertTimtPeriod.value)
-        print(insertTimeUnit.value)
         let userId = Auth.auth().currentUser?.uid
         let now = Singleton.getNowStringFormat()
         
         //TODO オフラインの場合考慮
         let question = Question()
-        question.createdDateTime = Singleton.getNowStringFormat()
+        question.uid = userId!
+        question.question = insertQuestioin.value.trimingLeftRight()
+        question.answer1 = insertAnswer1.value.trimingLeftRight()
+        question.answer2 = insertAnswer2.value.trimingLeftRight()
+        question.targetNumber = insertTargetNumber.value
+        question.timePeriod = insertTimtPeriod.value * insertTimeUnit.value
+        question.createdDateTime = now
 
         //Realm登録
         var questionId: Int?
@@ -93,10 +106,10 @@ class CreateQuestionViewModel {
         //firebase登録
         db.collection("questions").addDocument(data: [
             "uid": userId!,
-            "questionId": questionId!,
-            "question": insertQuestioin.value,
-            "answer1": insertAnswer1.value,
-            "answer2": insertAnswer2.value,
+            "clientQuestionId": questionId!,
+            "question": insertQuestioin.value.trimingLeftRight(),
+            "answer1": insertAnswer1.value.trimingLeftRight(),
+            "answer2": insertAnswer2.value.trimingLeftRight(),
             "answer1number": 0,
             "answer2number": 0,
             "targetNumber": insertTargetNumber.value,
@@ -119,13 +132,6 @@ class CreateQuestionViewModel {
             self.insertQuestioin.accept("")
             self.insertAnswer1.accept("")
             self.insertAnswer2.accept("")
-//            let question = Question()
-//            question.createdDateTime = Singleton.getNowStringFormat()
-//
-//            //Realm登録
-//            try! self.realm.write {
-//                self.realm.add(question)
-//            }
             self.submitResult.accept(true)
         }
     }
