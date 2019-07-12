@@ -7,17 +7,28 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
+import Firebase
+import RealmSwift
+import RxRealm
 
 class OthersQuestionsViewController: UITableViewController {
+    var questionList: Results<Question>!
+    let realm = try! Realm()
+    let diposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        self.questionList = realm.objects(Question.self)
+            .filter("owner == %@", Singleton.others)
+            .filter("deleteFlag == %@", false)
+        
+        Observable.collection(from: questionList).subscribe(onNext: { _ in
+            self.tableView.reloadData()
+        }).disposed(by: diposeBag)
+        
         let swipeL = UISwipeGestureRecognizer()
         swipeL.direction = .left
         swipeL.numberOfTouchesRequired = 1
@@ -31,16 +42,14 @@ class OthersQuestionsViewController: UITableViewController {
         self.view.addGestureRecognizer(swipeR)
     }
 
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
-
+    //    override func numberOfSections(in tableView: UITableView) -> Int {
+    //        // #warning Incomplete implementation, return the number of sections
+    //        return 1
+    //    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        return self.questionList.count
     }
     
     @objc func swipeLeft(sender:UISwipeGestureRecognizer) {
@@ -50,60 +59,78 @@ class OthersQuestionsViewController: UITableViewController {
     @objc func swipeRight(sender:UISwipeGestureRecognizer) {
         self.tabBarController?.selectedIndex = 0
     }
-
-    /*
+    
+    //    // Cell の高さを１２０にする
+    //    func tableView(_ table: UITableView,
+    //                   heightForRowAt indexPath: IndexPath) -> CGFloat {
+    //        return 120.0
+    //    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
+        let cell = tableView.dequeueReusableCell(withIdentifier: "othersQuestionCell", for: indexPath)
+        
+        let submitDateTimeLabel = cell.viewWithTag(1) as! UILabel
+        submitDateTimeLabel.text = questionList[indexPath.row].createdDateTime
+        
+        let askingLabel = cell.viewWithTag(2) as! UILabel
+        askingLabel.isHidden = questionList[indexPath.row].determinationFlag
+        
+        let determinationLabel = cell.viewWithTag(3) as! UILabel
+        determinationLabel.isHidden = !(questionList[indexPath.row].determinationFlag && !questionList[indexPath.row].confirmationFlag)
+        
+        let timeLimitLabel = cell.viewWithTag(4) as! UILabel
+        timeLimitLabel.text = questionList[indexPath.row].timeLimit
+        
+        let targetNumberLabel = cell.viewWithTag(5) as! UILabel
+        targetNumberLabel.text = String(questionList[indexPath.row].targetNumber) + "人"
+        
+        let questionView = cell.viewWithTag(6) as! UITextView
+        questionView.text = questionList[indexPath.row].question
+        
         return cell
     }
-    */
-
-    /*
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // セルの選択を解除
+        tableView.deselectRow(at: indexPath, animated: true)
+        moveToDetailView(indexPath: indexPath)
+    }
+    
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         return true
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
+    
+    //    // Override to support editing the table view.
+    //    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    //        if editingStyle == .delete {
+    //            // Delete the row from the data source
+    //            tableView.deleteRows(at: [indexPath], with: .fade)
+    //        } else if editingStyle == .insert {
+    //            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    //        }
+    //    }
+    
     // Override to support rearranging the table view.
     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
+        
     }
-    */
-
-    /*
+    
     // Override to support conditional rearranging of the table view.
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the item to be re-orderable.
         return true
     }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    
+    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        moveToDetailView(indexPath: indexPath)
     }
-    */
-
+    
+    func moveToDetailView(indexPath: IndexPath) {
+        let storyboard: UIStoryboard = self.storyboard!
+        let nextView = storyboard.instantiateViewController(withIdentifier: "DetailOthersQuestionViewController") as! DetailOwnQuestionViewController
+        nextView.questionId = questionList[indexPath.row].id
+        self.navigationController?.pushViewController(nextView, animated: true)
+    }
 }

@@ -20,6 +20,7 @@ class UserInfoViewController: UIViewController {
     @IBOutlet weak var updateButton: UIButton!
     @IBOutlet weak var indicator: UIActivityIndicatorView!
     let disposeBag = DisposeBag()
+    let realm = try! Realm()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,9 +48,8 @@ class UserInfoViewController: UIViewController {
             )
         )
         
-        let realm = try! Realm()
-        regionPickerView.selectRow(Singleton.regions.firstIndex(of: realm.objects(User.self).first!.region)!, inComponent: 0, animated: true)
-        agePickerView.selectRow(Singleton.ages.firstIndex(of: realm.objects(User.self).first!.age)!, inComponent: 0, animated: true)
+        regionPickerView.selectRow(Singleton.regions.firstIndex(of: self.realm.objects(User.self).first!.region)!, inComponent: 0, animated: true)
+        agePickerView.selectRow(Singleton.ages.firstIndex(of: self.realm.objects(User.self).first!.age)!, inComponent: 0, animated: true)
 
         let swipeR = UISwipeGestureRecognizer()
         swipeR.direction = .right
@@ -119,14 +119,12 @@ class UserInfoViewController: UIViewController {
         return Singleton.ages.count
     }
     
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    // 画面から非表示になる直後に呼ばれます。
+    // viewDidLoadとは異なり毎回呼び出されます。
+    override func viewDidDisappear(_: Bool) {
+//        super.viewDidDisappear(animated)
+        print("viewDidDisappear")
+        regionPickerView.selectRow(Singleton.regions.firstIndex(of: self.realm.objects(User.self).first!.region)!, inComponent: 0, animated: true)
+        agePickerView.selectRow(Singleton.ages.firstIndex(of: self.realm.objects(User.self).first!.age)!, inComponent: 0, animated: true)
     }
-    */
-
 }

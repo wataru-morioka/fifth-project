@@ -11,26 +11,42 @@ import RxSwift
 import RxCocoa
 import Firebase
 import RealmSwift
+import RxRealm
 
 class OwnQuestionsViewController: UITableViewController {
     var questionList: Results<Question>!
     let realm = try! Realm()
-
+    let diposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.questionList = realm.objects(Question.self)
             .filter("owner == %@", Singleton.own)
             .filter("deleteFlag == %@", false)
-
+        
+        Observable.collection(from: questionList).subscribe(onNext: { _ in
+            self.tableView.reloadData()
+        }).disposed(by: diposeBag)
+        
+//        DispatchQueue.global().async {
+//            Thread.sleep(forTimeInterval: 5)
+//            DispatchQueue.main.async {
+//                // UIを更新する処理
+//                let result = self.realm.objects(Question.self).filter("id == %@", 2)[0]
+//                try! self.realm.write {
+//                    result.confirmationFlag = true
+//                }
+//                print("データ更新")
+//            }
+//        }
+        
         let swipeL = UISwipeGestureRecognizer()
         swipeL.direction = .left
         swipeL.numberOfTouchesRequired = 1
         swipeL.addTarget(self, action: #selector(self.swipeLeft(sender:)))
         self.view.addGestureRecognizer(swipeL)
     }
-
-    // MARK: - Table view data source
 
 //    override func numberOfSections(in tableView: UITableView) -> Int {
 //        // #warning Incomplete implementation, return the number of sections
@@ -45,13 +61,41 @@ class OwnQuestionsViewController: UITableViewController {
     @objc func swipeLeft(sender:UISwipeGestureRecognizer) {
         self.tabBarController?.selectedIndex = 1
     }
+    
+//    // Cell の高さを１２０にする
+//    func tableView(_ table: UITableView,
+//                   heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 120.0
+//    }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ownQuestionCell", for: indexPath)
         
-        // Configure the cell...
+        let submitDateTimeLabel = cell.viewWithTag(1) as! UILabel
+        submitDateTimeLabel.text = questionList[indexPath.row].createdDateTime
+        
+        let askingLabel = cell.viewWithTag(2) as! UILabel
+        askingLabel.isHidden = questionList[indexPath.row].determinationFlag
+        
+        let determinationLabel = cell.viewWithTag(3) as! UILabel
+        determinationLabel.isHidden = !(questionList[indexPath.row].determinationFlag && !questionList[indexPath.row].confirmationFlag)
+        
+        let timeLimitLabel = cell.viewWithTag(4) as! UILabel
+        timeLimitLabel.text = String(questionList[indexPath.row].timePeriod) + questionList[indexPath.row].timeUnit
+        
+        let targetNumberLabel = cell.viewWithTag(5) as! UILabel
+        targetNumberLabel.text = String(questionList[indexPath.row].targetNumber) + "人"
+        
+        let questionView = cell.viewWithTag(6) as! UITextView
+        questionView.text = questionList[indexPath.row].question
 
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // セルの選択を解除
+        tableView.deselectRow(at: indexPath, animated: true)
+        moveToDetailView(indexPath: indexPath)
     }
 
     // Override to support conditional editing of the table view.
@@ -80,9 +124,15 @@ class OwnQuestionsViewController: UITableViewController {
         // Return false if you do not want the item to be re-orderable.
         return true
     }
-//
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        // Get the new view controller using segue.destination.
-//        // Pass the selected object to the new view controller.
-//    }
+    
+    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        moveToDetailView(indexPath: indexPath)
+    }
+    
+    func moveToDetailView(indexPath: IndexPath) {
+        let storyboard: UIStoryboard = self.storyboard!
+        let nextView = storyboard.instantiateViewController(withIdentifier: "DetailOwnQuestionViewController") as! DetailOwnQuestionViewController
+        nextView.questionId = questionList[indexPath.row].id
+        self.navigationController?.pushViewController(nextView, animated: true)
+    }
 }
