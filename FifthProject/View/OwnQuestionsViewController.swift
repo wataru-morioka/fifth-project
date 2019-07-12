@@ -16,7 +16,7 @@ import RxRealm
 class OwnQuestionsViewController: UITableViewController {
     var questionList: Results<Question>!
     let realm = try! Realm()
-    let diposeBag = DisposeBag()
+    let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,10 +24,11 @@ class OwnQuestionsViewController: UITableViewController {
         self.questionList = realm.objects(Question.self)
             .filter("owner == %@", Singleton.own)
             .filter("deleteFlag == %@", false)
+            .sorted(byKeyPath: "id", ascending: false)
         
         Observable.collection(from: questionList).subscribe(onNext: { _ in
             self.tableView.reloadData()
-        }).disposed(by: diposeBag)
+        }).disposed(by: disposeBag)
         
 //        DispatchQueue.global().async {
 //            Thread.sleep(forTimeInterval: 5)

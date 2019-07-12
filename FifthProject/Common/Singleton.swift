@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import Firebase
+import RealmSwift
 
 class Singleton {
     // 自動的に遅延初期化される(初回アクセスのタイミングでインスタンス生成)
@@ -45,6 +47,12 @@ class Singleton {
     
     static let own = "own"
     static let others = "others"
+    
+    static var uid: String {
+        get{
+            return Auth.auth().currentUser!.uid
+        }
+    }
     
     static func getNowStringFormat() -> String {
         let formatter = DateFormatter()

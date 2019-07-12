@@ -87,12 +87,12 @@ class CreateQuestionViewModel {
     }
     
     func submitQuestion() {
-        let userId = Auth.auth().currentUser?.uid
+        let userId = Singleton.uid
         let now = Singleton.getNowStringFormat()
         
         //TODO オフラインの場合考慮
         let question = Question()
-        question.uid = userId!
+        question.uid = userId
         question.owner = Singleton.own
         question.question = insertQuestioin.value.trimingLeftRight()
         question.answer1 = insertAnswer1.value.trimingLeftRight()
@@ -110,7 +110,7 @@ class CreateQuestionViewModel {
         
         //firebase登録
         db.collection("questions").addDocument(data: [
-            "uid": userId!,
+            "uid": userId,
             "clientQuestionId": questionId!,
             "question": insertQuestioin.value.trimingLeftRight(),
             "answer1": insertAnswer1.value.trimingLeftRight(),

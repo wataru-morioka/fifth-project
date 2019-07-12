@@ -96,15 +96,16 @@ class CreateQuestionTableViewController: UITableViewController {
         }).disposed(by: disposeBag)
         
         viewModel.submitResult.subscribe(onNext: { result in
-                self.showAlert(title: "送信完了", message: "送信が完了しました")
-                self.submitButton.rx.isEnabled.onNext(true)
                 self.indicator.stopAnimating()
+                self.submitButton.rx.isEnabled.onNext(true)
+                if !result {
+                    self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
+                    return
+                }
+                self.showAlert(title: "送信完了", message: "送信が完了しました")
             }
             , onError: { _ in
                 print("error")
-                self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
-                self.submitButton.rx.isEnabled.onNext(true)
-                self.indicator.stopAnimating()
             }
             , onCompleted: {
                 print("complete")

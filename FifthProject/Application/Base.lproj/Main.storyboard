@@ -194,7 +194,7 @@
                                     <color key="textColor" red="0.22182753180000001" green="1" blue="0.22382140680000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="x0i-Dq-Rgn">
+                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="x0i-Dq-Rgn">
                                     <rect key="frame" x="197" y="148" width="20" height="20"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 </activityIndicatorView>
@@ -755,8 +755,11 @@
                         <outlet property="answer2View" destination="hBE-oa-5bb" id="9is-7j-yR4"/>
                         <outlet property="answer2numView" destination="sAS-xl-tOt" id="QHZ-9N-lN3"/>
                         <outlet property="answer2perView" destination="lnd-6Z-H2Q" id="Ug2-98-JVY"/>
-                        <outlet property="answerSegment" destination="BY4-dG-Pq9" id="XUj-Fd-WHp"/>
+                        <outlet property="answerButton" destination="1cI-ib-ziI" id="pZk-WN-V3R"/>
+                        <outlet property="answerSegment" destination="BY4-dG-Pq9" id="Efd-Ey-q1a"/>
+                        <outlet property="indicator" destination="a24-4c-r7U" id="e12-kS-Yl6"/>
                         <outlet property="questionView" destination="3SM-rD-qJy" id="5ur-Eb-Pdf"/>
+                        <outlet property="yourChoiceLabel" destination="hTK-Du-bhE" id="Oql-2D-31O"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AER-JE-ROb" userLabel="First Responder" sceneMemberID="firstResponder"/>

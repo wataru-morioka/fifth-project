@@ -70,6 +70,12 @@ class RegistrationViewController : UIViewController {
         
         viewModel.registerResult.subscribe(onNext: { result in
                 self.indicator.stopAnimating()
+                if !result {
+                    self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
+                     self.registerButton.rx.isEnabled.onNext(true)
+                    return
+                }
+            
                 let alert = UIAlertController(title: "登録完了", message: "登録が完了しました", preferredStyle: UIAlertController.Style.alert)
                 let ok = UIAlertAction(title: "OK", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
                     self.performSegue(withIdentifier: "toMainView", sender: nil)
@@ -79,9 +85,6 @@ class RegistrationViewController : UIViewController {
             }
             , onError: { _ in
                 print("error")
-                self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
-                self.registerButton.rx.isEnabled.onNext(true)
-                self.indicator.stopAnimating()
             }
             , onCompleted: {
                 print("complete")

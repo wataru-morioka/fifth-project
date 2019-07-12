@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import Firebase
+import RealmSwift
 
 class Common {
     func getNowStringFormat() -> String {

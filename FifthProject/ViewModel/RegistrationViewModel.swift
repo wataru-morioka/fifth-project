@@ -34,13 +34,13 @@ class RegistrationViewModel {
         print(insertRegion.value)
         print(insertAge.value)
         
-        let userId = Auth.auth().currentUser?.uid
+        let userId = Singleton.uid
         
         let now = Singleton.getNowStringFormat()
         
         //firebase登録
-        db.collection("users").document(userId!).setData([
-            "uid": userId!,
+        db.collection("users").document(userId).setData([
+            "uid": userId,
             "region": insertRegion.value,
             "age": insertAge.value,
             "token": "",
@@ -56,7 +56,7 @@ class RegistrationViewModel {
             }
             print("success")
             let user = User()
-            user.uid = userId!
+            user.uid = userId
             user.region = self.insertRegion.value
             user.age = self.insertAge.value
             user.createdDateTime = Singleton.getNowStringFormat()
@@ -71,9 +71,9 @@ class RegistrationViewModel {
     
     func updateUser() {
         let now = Singleton.getNowStringFormat()
-        let userId = Auth.auth().currentUser?.uid
+        let userId = Singleton.uid
         //firebase登録
-        db.collection("users").document(userId!).updateData([
+        db.collection("users").document(userId).updateData([
             "region": insertRegion.value,
             "age": insertAge.value,
             "modifiedDateTime": now

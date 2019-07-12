@@ -8,6 +8,8 @@
 
 import UIKit
 import RealmSwift
+import RxSwift
+import RxRealm
 
 class DetailOwnQuestionViewController: UITableViewController {
     @IBOutlet weak var questionView: UITextView!
@@ -22,18 +24,39 @@ class DetailOwnQuestionViewController: UITableViewController {
     
     var questionId: Int!
     let realm = try! Realm()
+    var observableQuestion: Results<Question>!
     var questionDetail: Question!
+    let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        questionDetail = self.realm.objects(Question.self).filter("id == %@", self.questionId!).first
-        
+        observableQuestion = self.realm.objects(Question.self).filter("id == %@", self.questionId!)
+        Observable.collection(from: observableQuestion).subscribe(onNext: { _ in
+            self.setDisplay()
+        }).disposed(by: disposeBag)
+    }
+    
+    private func setDisplay() {
+        questionDetail = observableQuestion.first
+        questionDetail = observableQuestion.first
+        questionDetail = observableQuestion.first
         questionView.text = questionDetail.question
         answer1View.text = questionDetail.answer1
         answer2View.text = questionDetail.answer2
         
+        if !questionDetail.determinationFlag {
+            return
+        }
         
+        answer1numView.text = String(questionDetail.answer1number) + "人"
+        answer2numView.text = String(questionDetail.answer2number) + "人"
+        let sum = questionDetail.answer1number + questionDetail.answer2number
+        answer1perView.text = String(sum == 0 ? 0 : questionDetail.answer1number * 100 / sum) + "%"
+        answer2perView.text = String(sum == 0 ? 0 : questionDetail.answer2number * 100 / sum) + "%"
+        
+        statusLabel.text = "Aggregated!"
+        indeicator.stopAnimating()
     }
     
     //Headerが表示される時の処理

@@ -16,18 +16,19 @@ import RxRealm
 class OthersQuestionsViewController: UITableViewController {
     var questionList: Results<Question>!
     let realm = try! Realm()
-    let diposeBag = DisposeBag()
+    let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.questionList = realm.objects(Question.self)
-            .filter("owner == %@", Singleton.others)
+            .filter("owner == %@", Singleton.own)
             .filter("deleteFlag == %@", false)
+            .sorted(byKeyPath: "id", ascending: false)
         
         Observable.collection(from: questionList).subscribe(onNext: { _ in
             self.tableView.reloadData()
-        }).disposed(by: diposeBag)
+        }).disposed(by: disposeBag)
         
         let swipeL = UISwipeGestureRecognizer()
         swipeL.direction = .left
@@ -129,7 +130,7 @@ class OthersQuestionsViewController: UITableViewController {
     
     func moveToDetailView(indexPath: IndexPath) {
         let storyboard: UIStoryboard = self.storyboard!
-        let nextView = storyboard.instantiateViewController(withIdentifier: "DetailOthersQuestionViewController") as! DetailOwnQuestionViewController
+        let nextView = storyboard.instantiateViewController(withIdentifier: "DetailOthersQuestionViewController") as! DetailOthersQuestionViewController
         nextView.questionId = questionList[indexPath.row].id
         self.navigationController?.pushViewController(nextView, animated: true)
     }

@@ -79,15 +79,16 @@ class UserInfoViewController: UIViewController {
         }).disposed(by: disposeBag)
         
         viewModel.updateResult.subscribe(onNext: { result in
-                self.showAlert(title: "更新完了", message: "更新に成功しました")
                 self.updateButton.rx.isEnabled.onNext(true)
                 self.indicator.stopAnimating()
+                if !result {
+                    self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
+                    return
+                }
+                self.showAlert(title: "更新完了", message: "更新に成功しました")
             }
             , onError: { _ in
                 print("error")
-                self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
-                self.updateButton.rx.isEnabled.onNext(true)
-                self.indicator.stopAnimating()
             }
             , onCompleted: {
                 print("complete")
