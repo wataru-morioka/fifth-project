@@ -25,22 +25,18 @@ class DetailOwnQuestionViewController: UITableViewController {
     var questionId: Int!
     let realm = try! Realm()
     var observableQuestion: Results<Question>!
-    var questionDetail: Question!
     let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         observableQuestion = self.realm.objects(Question.self).filter("id == %@", self.questionId!)
-        Observable.collection(from: observableQuestion).subscribe(onNext: { _ in
-            self.setDisplay()
+        Observable.collection(from: observableQuestion).subscribe(onNext: { questions in
+            self.setDisplay(questionDetail: questions.first!)
         }).disposed(by: disposeBag)
     }
     
-    private func setDisplay() {
-        questionDetail = observableQuestion.first
-        questionDetail = observableQuestion.first
-        questionDetail = observableQuestion.first
+    private func setDisplay(questionDetail: Question) {
         questionView.text = questionDetail.question
         answer1View.text = questionDetail.answer1
         answer2View.text = questionDetail.answer2

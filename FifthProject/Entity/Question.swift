@@ -11,7 +11,7 @@ import RealmSwift
 
 class Question: BaseModel, Codable {
     // カラム定義
-    @objc dynamic var serverQuestionId: Int64 = 0
+    @objc dynamic var serverQuestionId: String?
     @objc dynamic var owner: String = ""
     @objc dynamic var uid: String = ""
     @objc dynamic var question: String = ""

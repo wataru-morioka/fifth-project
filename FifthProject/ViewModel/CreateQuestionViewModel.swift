@@ -54,17 +54,6 @@ class CreateQuestionViewModel {
             Singleton.timePeriodDictionary[unit]!
         }.bind(to: timePeriodArray)
         .disposed(by: disposeBag)
-        
-//        db.collection("questions").whereField("uid", isEqualTo: Auth.auth().currentUser!.uid)
-//            .addSnapshotListener { querySnapshot, error in
-//                guard let documents = querySnapshot?.documents else {
-//                    print("Error fetching documents: \(error!)")
-//                    return
-//                }
-//                let time = documents.map { $0["createdDateTime"]! }
-//                print(String(format: "検知成功：%@", time))
-//        }
-//
     }
     
     func bindIsValid(inputArea: Observable<String>) {

@@ -65,8 +65,8 @@ class CreateQuestionTableViewController: UITableViewController {
             )
         )
         
-        viewModel.timePeriodArray.bind(to: timePeriodPickerView.rx.itemTitles) { _, minute in
-            return String(minute)
+        viewModel.timePeriodArray.bind(to: timePeriodPickerView.rx.itemTitles) { _, period in
+            return String(period)
             }
             .disposed(by: disposeBag)
         viewModel.insertQuestioin.bind(to: questionView.rx.text).disposed(by: disposeBag)

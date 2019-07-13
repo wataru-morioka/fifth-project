@@ -28,34 +28,39 @@ class DetailOthersQuestionViewController: UITableViewController {
     var questionId: Int!
     let realm = try! Realm()
     var observableQuestion: Results<Question>!
-    var questionDetail: Question!
     let disposeBag = DisposeBag()
     let decision = BehaviorRelay<Int>(value: 1)
+    var timeLimit: Date!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         observableQuestion = self.realm.objects(Question.self).filter("id == %@", self.questionId!)
-        Observable.collection(from: observableQuestion).subscribe(onNext: { _ in
-            self.setDisplay()
+        Observable.collection(from: observableQuestion).subscribe(onNext: { questions in
+            self.setDisplay(questionDetail: questions.first!)
         }).disposed(by: disposeBag)
         
-        let viewModel = DetailOthersQuestionViewModel(input:
-            answerSegment.rx.value.asObservable().map{ $0 + 1 }
+        let viewModel = DetailOthersQuestionViewModel(
+            input: answerSegment.rx.value.asObservable().map{ $0 + 1 },
+            serverQuestionId: observableQuestion.first!.serverQuestionId!
         )
         
         answerButton.rx.tap.subscribe(onNext: { _ in
-                let alert = UIAlertController(title: "回答確認", message: "本当に回答しますか？", preferredStyle: UIAlertController.Style.alert)
-                let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
-                    self.indicator.startAnimating()
-                    self.answerButton.isEnabled = false
-                    viewModel.answer()
-                    
-                }
-                let ng = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel, handler: nil)
-                alert.addAction(ok)
-                alert.addAction(ng)
-                self.present(alert, animated: true, completion: nil)
+            if Date() > self.timeLimit {
+                self.showAlert(title: "タイムオーバー", message: "時間制限を過ぎております")
+                return
+            }
+        
+            let alert = UIAlertController(title: "回答確認", message: "本当に回答しますか？", preferredStyle: UIAlertController.Style.alert)
+            let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
+                self.indicator.startAnimating()
+                self.answerButton.isEnabled = false
+                viewModel.answer()
+            }
+            let ng = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel, handler: nil)
+            alert.addAction(ok)
+            alert.addAction(ng)
+            self.present(alert, animated: true, completion: nil)
         }).disposed(by: disposeBag)
         
         viewModel.answerResult.subscribe(onNext: { result in
@@ -76,8 +81,7 @@ class DetailOthersQuestionViewController: UITableViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    private func setDisplay() {
-        questionDetail = observableQuestion.first
+    private func setDisplay(questionDetail: Question) {
         questionView.text = questionDetail.question
         answer1View.text = questionDetail.answer1
         answer2View.text = questionDetail.answer2
@@ -86,7 +90,7 @@ class DetailOthersQuestionViewController: UITableViewController {
         let df = DateFormatter()
         df.dateFormat = "yyyy-MM-dd HH:mm:ss"
         df.locale = Locale(identifier: "ja_JP")
-        let timeLimit: Date = df.date(from: questionDetail.timeLimit!)!
+        self.timeLimit = df.date(from: questionDetail.timeLimit!)
         
         answerButton.isHidden = !(questionDetail.decision == 0 && Date() <= timeLimit)
         answerSegment.isHidden = questionDetail.decision == 0 && Date() > timeLimit
