@@ -73,7 +73,7 @@ class OwnQuestionsViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ownQuestionCell", for: indexPath)
         
         let submitDateTimeLabel = cell.viewWithTag(1) as! UILabel
-        submitDateTimeLabel.text = questionList[indexPath.row].createdDateTime
+        submitDateTimeLabel.text = Singleton.changeToLocalDateTime(target: questionList[indexPath.row].createdDateTime)
         
         let askingLabel = cell.viewWithTag(2) as! UILabel
         askingLabel.isHidden = questionList[indexPath.row].determinationFlag
@@ -97,6 +97,17 @@ class OwnQuestionsViewController: UITableViewController {
         // セルの選択を解除
         tableView.deselectRow(at: indexPath, animated: true)
         moveToDetailView(indexPath: indexPath)
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let questionId = questionList[indexPath.row].id
+            let question = self.realm.objects(Question.self).filter("id == %@", questionId).first!
+            try! self.realm.write {
+                question.deleteFlag = true
+            }
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
     }
 
     // Override to support conditional editing of the table view.

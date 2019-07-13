@@ -20,6 +20,8 @@ class DetailOthersQuestionViewController: UITableViewController {
     @IBOutlet weak var answer2perView: UILabel!
     @IBOutlet weak var answer2numView: UILabel!
     @IBOutlet weak var answer2View: UITextView!
+    @IBOutlet weak var timeLimitLabel: UILabel!
+    @IBOutlet weak var targetNumberLabel: UILabel!
     @IBOutlet weak var yourChoiceLabel: UILabel!
     @IBOutlet weak var answerSegment: UISegmentedControl!
     @IBOutlet weak var answerButton: UIButton!
@@ -85,6 +87,8 @@ class DetailOthersQuestionViewController: UITableViewController {
         questionView.text = questionDetail.question
         answer1View.text = questionDetail.answer1
         answer2View.text = questionDetail.answer2
+        timeLimitLabel.text = Singleton.changeToLocalDateTime(target: questionDetail.timeLimit!)
+        targetNumberLabel.text = String(questionDetail.targetNumber) + "人"
         
         //タイムリミットが過ぎていた場合
         let df = DateFormatter()

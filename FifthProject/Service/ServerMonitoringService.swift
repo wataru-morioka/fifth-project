@@ -50,9 +50,14 @@ class ServerMonitoringService {
                         question.timeLimit = target["timeLimit"] as? String
                         question.targetNumber = document?.data()!["targetNumber"] as! Int
                         question.createdDateTime = now
-                        try! self.realm.write {
-                            let _ = question.save()
+                        do {
+                            try self.realm.write {
+                                let _ = question.save()
+                            }
+                        } catch {
+                            print("質問データがすでに存在しています")
                         }
+                       
                         print("新着質問登録完了")
                         self.db.collection("targets")
                             .document(documentId)

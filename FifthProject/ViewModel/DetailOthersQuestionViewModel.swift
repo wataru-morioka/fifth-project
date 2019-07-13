@@ -36,6 +36,7 @@ class DetailOthersQuestionViewModel {
             question.decision = decision.value
             question.modifiedDateTime = now
         }
+        print("他人の質問に回答登録完了")
         
         //firebase登録
         db.collection("answers").addDocument(data: [
@@ -46,12 +47,12 @@ class DetailOthersQuestionViewModel {
             "createdDateTime": now
         ]) { error in
             if let error = error {
-                print("サーバエラー")
+                print("サーバエラー：回答サーバに送信完了")
                 print(error)
                 self.answerResult.accept(false)
                 return
             }
-            print("success")
+            print("回答サーバに送信完了")
             self.answerResult.accept(true)
         }
     }

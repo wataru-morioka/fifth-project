@@ -13,8 +13,6 @@ extension String {
         for c in self.reversed().enumerated() {
             let isMatch = c.element.unicodeScalars.contains { set.contains($0) }
             if !isMatch {
-//                return String(self[startIndex..<index(endIndex, offsetBy: -c.offset)])
-                // swift4
                 return String(prefix(upTo: index(endIndex, offsetBy: -c.offset)))
             }
         }
@@ -25,8 +23,6 @@ extension String {
         for c in self.enumerated() {
             let isMatch = c.element.unicodeScalars.contains { set.contains($0) }
             if !isMatch {
-//                return String(self[index(startIndex, offsetBy: c.offset)..<endIndex])
-                // swift4
                 return String(suffix(from: index(startIndex, offsetBy: c.offset)))
             }
         }

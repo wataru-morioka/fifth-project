@@ -71,7 +71,7 @@ class OthersQuestionsViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "othersQuestionCell", for: indexPath)
         
         let submitDateTimeLabel = cell.viewWithTag(1) as! UILabel
-        submitDateTimeLabel.text = questionList[indexPath.row].createdDateTime
+        submitDateTimeLabel.text = Singleton.changeToLocalDateTime(target: questionList[indexPath.row].createdDateTime)
         
         let askingLabel = cell.viewWithTag(2) as! UILabel
         askingLabel.isHidden = questionList[indexPath.row].determinationFlag
@@ -80,7 +80,7 @@ class OthersQuestionsViewController: UITableViewController {
         determinationLabel.isHidden = !(questionList[indexPath.row].determinationFlag && !questionList[indexPath.row].confirmationFlag)
         
         let timeLimitLabel = cell.viewWithTag(4) as! UILabel
-        timeLimitLabel.text = questionList[indexPath.row].timeLimit
+        timeLimitLabel.text = Singleton.changeToLocalDateTime(target: questionList[indexPath.row].timeLimit!)
         
         let targetNumberLabel = cell.viewWithTag(5) as! UILabel
         targetNumberLabel.text = String(questionList[indexPath.row].targetNumber) + "人"
@@ -95,6 +95,17 @@ class OthersQuestionsViewController: UITableViewController {
         // セルの選択を解除
         tableView.deselectRow(at: indexPath, animated: true)
         moveToDetailView(indexPath: indexPath)
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let questionId = questionList[indexPath.row].id
+            let question = self.realm.objects(Question.self).filter("id == %@", questionId).first!
+            try! self.realm.write {
+                question.deleteFlag = true
+            }
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
     }
     
     // Override to support conditional editing of the table view.

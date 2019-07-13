@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-class BaseModel: Object {
+class BaseEntity: Object {
     // ID
     @objc dynamic var id = 0
     

@@ -12,12 +12,6 @@ import Firebase
 import RealmSwift
 
 class Common {
-    func getNowStringFormat() -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd' 'HH:mm:ss"
-        return formatter.string(from: Date())
-    }
-    
     func moveToView(fromView: UIWindow?, toView: String) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let initialViewController = storyboard.instantiateViewController(withIdentifier: toView)

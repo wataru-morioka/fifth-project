@@ -98,6 +98,8 @@ class CreateQuestionViewModel {
             questionId = question.save()
         }
         
+        print("新規自分の質問登録完了")
+        
         //firebase登録
         db.collection("questions").addDocument(data: [
             "uid": userId,
@@ -119,12 +121,12 @@ class CreateQuestionViewModel {
             "modifiedDateTime": ""
         ]) { error in
             if let error = error {
-                print("サーバエラー")
+                print("サーバエラー：自分の質問サーバに送信完了")
                 print(error)
                 self.submitResult.accept(false)
                 return
             }
-            print("success")
+            print("自分の質問サーバに送信完了")
             self.insertQuestioin.accept("")
             self.insertAnswer1.accept("")
             self.insertAnswer2.accept("")

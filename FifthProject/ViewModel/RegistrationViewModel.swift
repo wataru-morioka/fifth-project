@@ -49,12 +49,12 @@ class RegistrationViewModel {
             "modifiedDateTime": ""
         ]) { error in
             if let error = error {
-                print("サーバエラー")
+                print("サーバエラー：ユーザ情報の登録サーバに送信")
                 print(error)
                 self.registerResult.accept(false)
                 return
             }
-            print("success")
+            print("ユーザ情報の登録サーバに送信完了")
             let user = User()
             user.uid = userId
             user.region = self.insertRegion.value
@@ -79,18 +79,19 @@ class RegistrationViewModel {
             "modifiedDateTime": now
         ]) { error in
             if let error = error {
-                print("サーバエラー")
+                print("サーバエラー：ユーザ情報更新サーバに送信")
                 print(error)
                 self.updateResult.accept(false)
                 return
             }
-            print("success")
+            print("ユーザ情報更新サーバに送信完了")
             let myInfo = self.realm.objects(User.self).first!
             try! self.realm.write {
                 myInfo.region = self.insertRegion.value
                 myInfo.age = self.insertAge.value
                 myInfo.modifiedDateTime = now
             }
+            print("ユーザ情報更新完了")
             self.updateResult.accept(true)
         }
         

@@ -20,10 +20,6 @@
 		6212B29822D4A12D006DE27B /* DetailOwnQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6212B29722D4A12D006DE27B /* DetailOwnQuestionViewModel.swift */; };
 		6212B29A22D4A140006DE27B /* DetailOthersQuestionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6212B29922D4A140006DE27B /* DetailOthersQuestionViewModel.swift */; };
 		6212B29C22D4A15D006DE27B /* Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6212B29B22D4A15D006DE27B /* Question.swift */; };
-		6212B2A022D4EB4B006DE27B /* ServerUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6212B29F22D4EB4B006DE27B /* ServerUser.swift */; };
-		6212B2A222D4EB5A006DE27B /* ServerQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6212B2A122D4EB5A006DE27B /* ServerQuestion.swift */; };
-		6212B2A422D4EB6B006DE27B /* ServerTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6212B2A322D4EB6B006DE27B /* ServerTarget.swift */; };
-		6212B2A622D4EB81006DE27B /* ServerAnswer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6212B2A522D4EB81006DE27B /* ServerAnswer.swift */; };
 		62210B8C22D3902E00EACAC8 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62210B8B22D3902E00EACAC8 /* LoginViewController.swift */; };
 		6237E1DE22D0CC6200E95F55 /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6237E1DD22D0CC6200E95F55 /* RegistrationViewController.swift */; };
 		6237E1E022D0D0E800E95F55 /* ViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6237E1DF22D0D0E800E95F55 /* ViewControllerExtension.swift */; };
@@ -33,7 +29,7 @@
 		628DF67C22CE23F600CF6F91 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 628DF67B22CE23F500CF6F91 /* GoogleService-Info.plist */; };
 		629280EE22D49F7800DF7678 /* CreateQuestionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629280ED22D49F7800DF7678 /* CreateQuestionViewController.swift */; };
 		629280F022D49FB600DF7678 /* UserInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629280EF22D49FB600DF7678 /* UserInfoViewController.swift */; };
-		629C6CA322D5190B002E78D1 /* BaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629C6CA222D5190B002E78D1 /* BaseModel.swift */; };
+		629C6CA322D5190B002E78D1 /* BaseEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629C6CA222D5190B002E78D1 /* BaseEntity.swift */; };
 		62AF56F722D214B800361D3D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62AF56F622D214B800361D3D /* User.swift */; };
 		62AF56F922D21F9E00361D3D /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62AF56F822D21F9E00361D3D /* Common.swift */; };
 		62F664E822CE16BE00DF90AD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F664E722CE16BE00DF90AD /* AppDelegate.swift */; };
@@ -76,10 +72,6 @@
 		6212B29722D4A12D006DE27B /* DetailOwnQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailOwnQuestionViewModel.swift; sourceTree = "<group>"; };
 		6212B29922D4A140006DE27B /* DetailOthersQuestionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailOthersQuestionViewModel.swift; sourceTree = "<group>"; };
 		6212B29B22D4A15D006DE27B /* Question.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Question.swift; sourceTree = "<group>"; };
-		6212B29F22D4EB4B006DE27B /* ServerUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUser.swift; sourceTree = "<group>"; };
-		6212B2A122D4EB5A006DE27B /* ServerQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerQuestion.swift; sourceTree = "<group>"; };
-		6212B2A322D4EB6B006DE27B /* ServerTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTarget.swift; sourceTree = "<group>"; };
-		6212B2A522D4EB81006DE27B /* ServerAnswer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerAnswer.swift; sourceTree = "<group>"; };
 		62210B8B22D3902E00EACAC8 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		6237E1DD22D0CC6200E95F55 /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
 		6237E1DF22D0D0E800E95F55 /* ViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerExtension.swift; sourceTree = "<group>"; };
@@ -89,7 +81,7 @@
 		628DF67B22CE23F500CF6F91 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		629280ED22D49F7800DF7678 /* CreateQuestionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateQuestionViewController.swift; sourceTree = "<group>"; };
 		629280EF22D49FB600DF7678 /* UserInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoViewController.swift; sourceTree = "<group>"; };
-		629C6CA222D5190B002E78D1 /* BaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseModel.swift; sourceTree = "<group>"; };
+		629C6CA222D5190B002E78D1 /* BaseEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseEntity.swift; sourceTree = "<group>"; };
 		62AF56F622D214B800361D3D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		62AF56F822D21F9E00361D3D /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		62F664E422CE16BE00DF90AD /* FifthProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FifthProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -156,7 +148,7 @@
 			children = (
 				62AF56F622D214B800361D3D /* User.swift */,
 				6212B29B22D4A15D006DE27B /* Question.swift */,
-				629C6CA222D5190B002E78D1 /* BaseModel.swift */,
+				629C6CA222D5190B002E78D1 /* BaseEntity.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -187,17 +179,6 @@
 				6212B29922D4A140006DE27B /* DetailOthersQuestionViewModel.swift */,
 			);
 			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		6237E1D722D09AB400E95F55 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				6212B29F22D4EB4B006DE27B /* ServerUser.swift */,
-				6212B2A122D4EB5A006DE27B /* ServerQuestion.swift */,
-				6212B2A322D4EB6B006DE27B /* ServerTarget.swift */,
-				6212B2A522D4EB81006DE27B /* ServerAnswer.swift */,
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		6237E1D822D0B07700E95F55 /* Common */ = {
@@ -266,7 +247,6 @@
 				6237E1D922D0B07F00E95F55 /* Service */,
 				6237E1D822D0B07700E95F55 /* Common */,
 				6212B29E22D4EAA6006DE27B /* Entity */,
-				6237E1D722D09AB400E95F55 /* Model */,
 				6237E1D622D09AA500E95F55 /* ViewModel */,
 				6237E1D422D09A4500E95F55 /* View */,
 				62F664F022CE16BF00DF90AD /* Assets.xcassets */,
@@ -552,21 +532,17 @@
 				62774AD722D96A3100A8B944 /* ServerMonitoringService.swift in Sources */,
 				6212B29422D4A0A0006DE27B /* OwnQuestionsViewModel.swift in Sources */,
 				6212B28C22D4A042006DE27B /* DetailOwnQuestionViewController.swift in Sources */,
-				6212B2A622D4EB81006DE27B /* ServerAnswer.swift in Sources */,
 				6212B28A22D4A024006DE27B /* OthersQuestionsViewController.swift in Sources */,
 				629280EE22D49F7800DF7678 /* CreateQuestionViewController.swift in Sources */,
 				6212B28E22D4A054006DE27B /* DetailOthersQuestionViewController.swift in Sources */,
 				6212B29622D4A0AF006DE27B /* OthersQuestionsViewModel.swift in Sources */,
-				629C6CA322D5190B002E78D1 /* BaseModel.swift in Sources */,
+				629C6CA322D5190B002E78D1 /* BaseEntity.swift in Sources */,
 				6237E1E022D0D0E800E95F55 /* ViewControllerExtension.swift in Sources */,
 				623D3BDB22D1C697007CEEED /* RegistrationViewModel.swift in Sources */,
 				62AF56F922D21F9E00361D3D /* Common.swift in Sources */,
 				6212B29C22D4A15D006DE27B /* Question.swift in Sources */,
-				6212B2A022D4EB4B006DE27B /* ServerUser.swift in Sources */,
 				6212B28822D4A012006DE27B /* OwnQuestionsViewController.swift in Sources */,
-				6212B2A222D4EB5A006DE27B /* ServerQuestion.swift in Sources */,
 				62AF56F722D214B800361D3D /* User.swift in Sources */,
-				6212B2A422D4EB6B006DE27B /* ServerTarget.swift in Sources */,
 				62F664E822CE16BE00DF90AD /* AppDelegate.swift in Sources */,
 				629280F022D49FB600DF7678 /* UserInfoViewController.swift in Sources */,
 				6237E1DE22D0CC6200E95F55 /* RegistrationViewController.swift in Sources */,

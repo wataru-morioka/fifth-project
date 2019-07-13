@@ -18,9 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         let config = Realm.Configuration(
-            schemaVersion: 7,
+            schemaVersion: 8,
             migrationBlock: { migration, oldSchemaVersion in
-                if (oldSchemaVersion < 7) {
+                if (oldSchemaVersion < 8) {
                 }
         })
         Realm.Configuration.defaultConfiguration = config
@@ -67,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         // ...
         if let error = error {
             print(error)
-            print("キャンセル")
+            print("認証キャンセル")
      
             let realm = try! Realm()
             let myInfo = realm.objects(User.self)
@@ -90,7 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                 print("認証エラー")
                 return
             }
-            print("認証OK")
+            print("認証成功")
             
             let _ = ServerMonitoringService()
             

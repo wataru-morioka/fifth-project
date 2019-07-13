@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-class Question: BaseModel, Codable {
+class Question: BaseEntity, Codable {
     // カラム定義
     @objc dynamic var serverQuestionId: String?
     @objc dynamic var owner: String = ""
@@ -33,4 +33,7 @@ class Question: BaseModel, Codable {
 //    override public static func primaryKey() -> String? {
 //        return "id"
 //    }
+    override static func indexedProperties() -> [String] {
+        return ["serverQuestionId"]
+    }
 }
