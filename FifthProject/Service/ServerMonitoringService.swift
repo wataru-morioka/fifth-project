@@ -48,6 +48,7 @@ class ServerMonitoringService {
                         question.answer1 = document?.data()!["answer1"] as! String
                         question.answer2 = document?.data()!["answer2"] as! String
                         question.timeLimit = target["timeLimit"] as? String
+                        question.targetNumber = document?.data()!["targetNumber"] as! Int
                         question.createdDateTime = now
                         try! self.realm.write {
                             let _ = question.save()
