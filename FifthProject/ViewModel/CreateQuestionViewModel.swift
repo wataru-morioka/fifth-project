@@ -17,10 +17,11 @@ class CreateQuestionViewModel {
     let insertQuestioin = BehaviorRelay<String>(value: "")
     let insertAnswer1 = BehaviorRelay<String>(value: "")
     let insertAnswer2 = BehaviorRelay<String>(value: "")
+    //TODO 初期値
     let insertTargetNumber = BehaviorRelay<Int>(value: 3)
     let insertTimtPeriod = BehaviorRelay<Int>(value: 5)
     let insertTimeUnit = BehaviorRelay<Int>(value: 1)
-    let timeUnit = BehaviorRelay<String>(value: "")
+    let timeUnit = BehaviorRelay<String>(value: "分")
     let isValid = BehaviorRelay<Bool>(value: false)
     let submitResult = PublishRelay<Bool>()
     var timePeriodArray = BehaviorRelay<[Int]>(value: ([Int])(1...60))
@@ -108,6 +109,7 @@ class CreateQuestionViewModel {
             "answer2number": 0,
             "targetNumber": insertTargetNumber.value,
             "timePeriod": insertTimtPeriod.value * insertTimeUnit.value,
+            "timeUnit": timeUnit.value,
             "timeLimit": "",
             "askFlag": false,
             "determinationFlag": false,

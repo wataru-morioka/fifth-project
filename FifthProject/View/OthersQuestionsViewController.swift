@@ -22,7 +22,7 @@ class OthersQuestionsViewController: UITableViewController {
         super.viewDidLoad()
         
         self.questionList = realm.objects(Question.self)
-            .filter("owner == %@", Singleton.own)
+            .filter("owner == %@", Singleton.others)
             .filter("deleteFlag == %@", false)
             .sorted(byKeyPath: "id", ascending: false)
         
