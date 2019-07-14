@@ -136,6 +136,7 @@ PODS:
   - nanopb/decode (0.3.901)
   - nanopb/encode (0.3.901)
   - Protobuf (3.8.0)
+  - ReachabilitySwift (4.3.1)
   - Realm (3.17.0):
     - Realm/Headers (= 3.17.0)
   - Realm/Headers (3.17.0)
@@ -159,6 +160,7 @@ DEPENDENCIES:
   - Firebase/Firestore
   - Firebase/Messaging
   - GoogleSignIn
+  - ReachabilitySwift
   - RealmSwift
   - RxCocoa
   - RxRealm
@@ -187,6 +189,7 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - Protobuf
+    - ReachabilitySwift
     - Realm
     - RealmSwift
     - RxCocoa
@@ -216,6 +219,7 @@ SPEC CHECKSUMS:
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 3f617b9a6e73605565086864c9bc26b2bf2dd5a3
+  ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b
   Realm: b30db41ff34fc858ffc25ba8d44a82c164e7ccd0
   RealmSwift: fe733e459d60dc7b6971d4cbee2eb4854097d12c
   RxCocoa: fcf32050ac00d801f34a7f71d5e8e7f23026dcd8
@@ -223,6 +227,6 @@ SPEC CHECKSUMS:
   RxRelay: 4f7409406a51a55cd88483f21ed898c234d60f18
   RxSwift: 8b0671caa829a763bbce7271095859121cbd895f
 
-PODFILE CHECKSUM: a2484c51e8a5fd6ed8ad8584f7bd94901768216b
+PODFILE CHECKSUM: 1406cec73ed5311bcb7b19f809d8e6f7da2fcd5a
 
 COCOAPODS: 1.7.3

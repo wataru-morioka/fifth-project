@@ -21,6 +21,7 @@ class RegistrationViewModel {
     
     let db = Firestore.firestore()
     let realm = try! Realm()
+    var token: String? = ""
     
     init (input: (region: Observable<String>, age: Observable<Int>)) {
         self.insertRegion = BehaviorRelay<String>(value: realm.objects(User.self).first?.region ?? Singleton.regions[0])
@@ -28,11 +29,16 @@ class RegistrationViewModel {
         
         input.region.bind(to: insertRegion).disposed(by: disposeBag)
         input.age.bind(to: insertAge).disposed(by: disposeBag)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(setToken), name: NSNotification.Name("getToken"), object: nil)
+        Singleton.getToken()
     }
     
     func registerUser() {
-        print(insertRegion.value)
-        print(insertAge.value)
+        if !Singleton.isOnline {
+            self.registerResult.accept(false)
+            return
+        }
         
         let userId = Singleton.uid
         
@@ -43,7 +49,7 @@ class RegistrationViewModel {
             "uid": userId,
             "region": insertRegion.value,
             "age": insertAge.value,
-            "token": "",
+            "token": self.token ?? "",
             "deleteFlag": false,
             "createdDateTime": now,
             "modifiedDateTime": ""
@@ -69,13 +75,28 @@ class RegistrationViewModel {
         }
     }
     
+    @objc func setToken(notification: NSNotification) {
+        guard let userInfo = notification.userInfo else {
+                print("No userInfo found in notification")
+                return
+        }
+        self.token = userInfo["token"] as? String
+    }
+    
     func updateUser() {
+        if !Singleton.isOnline {
+            self.updateResult.accept(false)
+            return
+        }
+        
         let now = Singleton.getNowStringFormat()
         let userId = Singleton.uid
+        
         //firebase登録
         db.collection("users").document(userId).updateData([
             "region": insertRegion.value,
             "age": insertAge.value,
+            "token": self.token ?? "",
             "modifiedDateTime": now
         ]) { error in
             if let error = error {

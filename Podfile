@@ -16,6 +16,8 @@ target 'FifthProject' do
   pod 'RxSwift'
   pod 'RxCocoa'
   pod 'RxRealm'
+#  pod 'Reachability'
+  pod 'ReachabilitySwift'
 
   # Pods for FifthProject
 

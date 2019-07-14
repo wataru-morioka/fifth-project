@@ -18,4 +18,16 @@ class Common {
         fromView?.rootViewController = initialViewController
         fromView?.makeKeyAndVisible()
     }
+    
+    func getToken() {
+        InstanceID.instanceID().instanceID { (result, error) in
+            if let error = error {
+                print("Error fetching remote instance ID: \(error)")
+            } else if let result = result {
+                print("Remote instance ID token: \(result.token)")
+                print(String(format: "トークン取得：%@", result.token))
+                NotificationCenter.default.post(name: Notification.Name("getToken"), object: nil, userInfo: ["token": result.token])
+            }
+        }
+    }
 }

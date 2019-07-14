@@ -27,16 +27,13 @@ class DetailOthersQuestionViewModel {
     }
     
     func answer() {
+        if !Singleton.isOnline {
+            self.answerResult.accept(false)
+            return
+        }
+        
         let userId = Singleton.uid
         let now = Singleton.getNowStringFormat()
-        
-        //TODO オフラインの場合考慮
-        let question = self.realm.objects(Question.self).filter("serverQuestionId == %@", self.serverQuestionId).first!
-        try! realm.write {
-            question.decision = decision.value
-            question.modifiedDateTime = now
-        }
-        print("他人の質問に回答登録完了")
         
         //firebase登録
         db.collection("answers").addDocument(data: [
@@ -53,6 +50,13 @@ class DetailOthersQuestionViewModel {
                 return
             }
             print("回答サーバに送信完了")
+            
+            let question = self.realm.objects(Question.self).filter("serverQuestionId == %@", self.serverQuestionId).first!
+            try! self.realm.write {
+                question.decision = self.decision.value
+                question.modifiedDateTime = now
+            }
+            print("他人の質問に回答登録完了")
             self.answerResult.accept(true)
         }
     }

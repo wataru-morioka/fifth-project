@@ -11,6 +11,7 @@ import RxSwift
 import RxCocoa
 import Firebase
 import RealmSwift
+import Reachability
 
 class CreateQuestionViewModel {
     let disposeBag = DisposeBag()
@@ -77,11 +78,15 @@ class CreateQuestionViewModel {
     }
     
     func submitQuestion() {
+        if !Singleton.isOnline {
+            self.submitResult.accept(false)
+            return
+        }
+        
         let userId = Singleton.uid
         let now = Singleton.getNowStringFormat()
-        
-        //TODO オフラインの場合考慮
         let question = Question()
+        
         question.uid = userId
         question.owner = Singleton.own
         question.question = insertQuestioin.value.trimingLeftRight()
@@ -112,7 +117,7 @@ class CreateQuestionViewModel {
             "targetNumber": insertTargetNumber.value,
             "timePeriod": insertTimtPeriod.value * insertTimeUnit.value,
             "timeUnit": timeUnit.value,
-            "timeLimit": "",
+            "timeLimit": "2999-01-01 00:00:00",
             "askFlag": false,
             "determinationFlag": false,
             "finalPushFlag": false,

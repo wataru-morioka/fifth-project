@@ -21,6 +21,8 @@ class OwnQuestionsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let _ = TokenMonitoringService()
+        
         self.questionList = realm.objects(Question.self)
             .filter("owner == %@", Singleton.own)
             .filter("deleteFlag == %@", false)
@@ -29,18 +31,6 @@ class OwnQuestionsViewController: UITableViewController {
         Observable.collection(from: questionList).subscribe(onNext: { _ in
             self.tableView.reloadData()
         }).disposed(by: disposeBag)
-        
-//        DispatchQueue.global().async {
-//            Thread.sleep(forTimeInterval: 5)
-//            DispatchQueue.main.async {
-//                // UIを更新する処理
-//                let result = self.realm.objects(Question.self).filter("id == %@", 2)[0]
-//                try! self.realm.write {
-//                    result.confirmationFlag = true
-//                }
-//                print("データ更新")
-//            }
-//        }
         
         let swipeL = UISwipeGestureRecognizer()
         swipeL.direction = .left
