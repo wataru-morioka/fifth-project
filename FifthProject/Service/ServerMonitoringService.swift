@@ -17,16 +17,27 @@ class ServerMonitoringService {
     let db = Firestore.firestore()
     let realm = try! Realm()
     let uid = Auth.auth().currentUser!.uid
+    var newQuestionListener: ListenerRegistration!
+    var ownResultListener: ListenerRegistration!
+    var othersResultListener: ListenerRegistration!
     static let runningProcess = ServerMonitoringService()
     
-    private init() {
+    private init() {}
+    
+    func attachListener() {
         fetchNewQuestion()
         fetchOwnQuestionnResult()
         fetchOhersQuestioinResult()
     }
     
+    func detachListener() {
+        self.newQuestionListener.remove()
+        self.ownResultListener.remove()
+        self.othersResultListener.remove()
+    }
+    
     private func fetchNewQuestion(){
-        db.collection("targets")
+        self.newQuestionListener = db.collection("targets")
         .whereField("uid", isEqualTo: uid)
         .whereField("askReceiveFlag", isEqualTo: false)
         .addSnapshotListener { querySnapshot, error in
@@ -75,7 +86,7 @@ class ServerMonitoringService {
     }
     
     private func fetchOwnQuestionnResult(){
-        db.collection("questions")
+        self.ownResultListener = db.collection("questions")
         .whereField("uid", isEqualTo: uid)
         .whereField("determinationFlag", isEqualTo: true)
         .whereField("resultReceiveFlag", isEqualTo: false)
@@ -117,7 +128,7 @@ class ServerMonitoringService {
     }
     
     private func fetchOhersQuestioinResult(){
-        db.collection("targets")
+        self.othersResultListener = db.collection("targets")
         .whereField("uid", isEqualTo: uid)
         .whereField("determinationFlag", isEqualTo: true)
         .whereField("resultReceiveFlag", isEqualTo: false)

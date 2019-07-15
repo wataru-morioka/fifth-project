@@ -14,11 +14,12 @@ class NetworkMonitoringService {
         reachability.whenReachable = { reachability in
             print(String(format: "ネットワーク状態変化：オンライン"))
             Common.isOnline = true
-            let _ = ServerMonitoringService.runningProcess
+            ServerMonitoringService.runningProcess.attachListener()
         }
         reachability.whenUnreachable = { _ in
             print(String(format: "ネットワーク状態変化：オフライン"))
             Common.isOnline = false
+            ServerMonitoringService.runningProcess.detachListener()
         }
         
         do {
