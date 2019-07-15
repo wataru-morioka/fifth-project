@@ -66,7 +66,7 @@ class CreateQuestionTableViewController: UITableViewController {
         )
         
         viewModel.timePeriodArray.bind(to: timePeriodPickerView.rx.itemTitles) { _, period in
-            return String(period)
+                return String(period)
             }
             .disposed(by: disposeBag)
         viewModel.insertQuestioin.bind(to: questionView.rx.text).disposed(by: disposeBag)
@@ -136,9 +136,9 @@ class CreateQuestionTableViewController: UITableViewController {
         guard let header = view as? UITableViewHeaderFooterView else { return }
         //Headerのラベルの文字色を設定
         header.textLabel?.textColor = UIColor.orange
-        header.textLabel?.font = UIFont.systemFont(ofSize: 15)
+        header.textLabel?.font = UIFont.systemFont(ofSize: 12)
         //Headerの背景色を設定
-        header.contentView.backgroundColor = UIColor.black
+        header.contentView.backgroundColor = UIColor.darkGray
         header.isUserInteractionEnabled = true
         header.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapHeader(sender:))))
     }

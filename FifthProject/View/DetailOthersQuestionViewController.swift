@@ -120,9 +120,9 @@ class DetailOthersQuestionViewController: UITableViewController {
         guard let header = view as? UITableViewHeaderFooterView else { return }
         //Headerのラベルの文字色を設定
         header.textLabel?.textColor = UIColor.orange
-        header.textLabel?.font = UIFont.systemFont(ofSize: 15)
+        header.textLabel?.font = UIFont.systemFont(ofSize: 12)
         //Headerの背景色を設定
-        header.contentView.backgroundColor = UIColor.black
+        header.contentView.backgroundColor = UIColor.darkGray
         header.isUserInteractionEnabled = true
     }
 }
