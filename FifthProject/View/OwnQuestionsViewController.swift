@@ -22,9 +22,10 @@ class OwnQuestionsViewController: UITableViewController {
         super.viewDidLoad()
         
         let _ = TokenMonitoringService()
+//        let _ = NetworkMonitoringService()
         
         self.questionList = realm.objects(Question.self)
-            .filter("owner == %@", Singleton.own)
+            .filter("owner == %@", Constant.own)
             .filter("deleteFlag == %@", false)
             .sorted(byKeyPath: "id", ascending: false)
         
@@ -63,7 +64,7 @@ class OwnQuestionsViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ownQuestionCell", for: indexPath)
         
         let submitDateTimeLabel = cell.viewWithTag(1) as! UILabel
-        submitDateTimeLabel.text = Singleton.changeToLocalDateTime(target: questionList[indexPath.row].createdDateTime)
+        submitDateTimeLabel.text = Common.changeToLocalDateTime(target: questionList[indexPath.row].createdDateTime)
         
         let askingLabel = cell.viewWithTag(2) as! UILabel
         askingLabel.isHidden = questionList[indexPath.row].determinationFlag

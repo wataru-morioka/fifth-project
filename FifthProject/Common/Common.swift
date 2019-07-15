@@ -12,6 +12,8 @@ import Firebase
 import RealmSwift
 
 class Common {
+    static var isOnline = true
+    
     func moveToView(fromView: UIWindow?, toView: String) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let initialViewController = storyboard.instantiateViewController(withIdentifier: toView)
@@ -19,7 +21,30 @@ class Common {
         fromView?.makeKeyAndVisible()
     }
     
-    func getToken() {
+    static func getNowDate(target: String) -> Date {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd' 'HH:mm:ss"
+        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        return formatter.date(from: target)!
+    }
+    
+    static func getNowStringFormat() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd' 'HH:mm:ss"
+        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        return formatter.string(from: Date())
+    }
+    
+    static func changeToLocalDateTime(target: String) -> String{
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone.current
+        formatter.locale = Locale.current
+        formatter.dateFormat = "yyyy-MM-dd' 'HH:mm:ss"
+        let localDateTime = formatter.date(from: target)
+        return formatter.string(from: localDateTime!)
+    }
+    
+    static func getToken() {
         InstanceID.instanceID().instanceID { (result, error) in
             if let error = error {
                 print("Error fetching remote instance ID: \(error)")

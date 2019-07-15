@@ -10,21 +10,15 @@ import Foundation
 import Reachability
 
 class NetworkMonitoringService {
-    let reachability = Reachability()!
-    init(){
-        if let reachability = Reachability() {
-            print("ネットワーク状況取得")
-            print(!(reachability.connection == .none))
-            Singleton.isOnline = !(reachability.connection == .none)
-        }
-        
+    init(reachability: Reachability){
         reachability.whenReachable = { reachability in
             print(String(format: "ネットワーク状態変化：オンライン"))
-            Singleton.isOnline = true
+            Common.isOnline = true
+            let _ = ServerMonitoringService.runningProcess
         }
         reachability.whenUnreachable = { _ in
             print(String(format: "ネットワーク状態変化：オフライン"))
-            Singleton.isOnline = false
+            Common.isOnline = false
         }
         
         do {

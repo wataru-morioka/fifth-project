@@ -29,13 +29,13 @@ class RegistrationViewController : UIViewController {
         regionPickerView.tag = 0
         agePickerView.tag = 1
         
-        Observable.just(Singleton.regions)
+        Observable.just(Constant.regions)
             .bind(to: regionPickerView.rx.itemTitles) { _, region in
                 return region
             }
             .disposed(by: disposeBag)
         
-        Observable.just(Singleton.ages)
+        Observable.just(Constant.ages)
             .bind(to: agePickerView.rx.itemTitles) { _, age in
                 return String(age)
             }

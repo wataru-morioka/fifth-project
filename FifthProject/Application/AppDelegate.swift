@@ -10,11 +10,12 @@ import UIKit
 import Firebase
 import RealmSwift
 import GoogleSignIn
+import Reachability
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
-
     var window: UIWindow?
+    let reachability = Reachability()!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         let config = Realm.Configuration(
@@ -47,9 +48,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         
         application.registerForRemoteNotifications()
         
-        let _ = NetworkMonitoringService()
-        
         return true
+    }
+    
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        switch application.applicationState {
+        case .inactive:
+            print("バックグアウンドからプッシュ通知をタップ")
+            print(userInfo)
+        case .active:
+            print("フォアグランドでプッシュ通知を受信")
+            print(userInfo)
+        case .background:
+            print(userInfo)
+        default:
+            break
+        }
+        completionHandler(UIBackgroundFetchResult.newData)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -100,12 +116,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
      
             let realm = try! Realm()
             let myInfo = realm.objects(User.self)
-            if myInfo.count != 0 {
-                self.window = UIWindow(frame: UIScreen.main.bounds)
-                Common().moveToView(fromView: self.window, toView: "MainViewController")
+            if myInfo.count == 0 {
                 return
             }
-            
+            let _ = NetworkMonitoringService(reachability: self.reachability)
+            self.window = UIWindow(frame: UIScreen.main.bounds)
+            Common().moveToView(fromView: self.window, toView: "MainViewController")
             return
         }
         
@@ -121,7 +137,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             }
             print("認証成功")
             
-            let _ = ServerMonitoringService()
+            let _ = NetworkMonitoringService(reachability: self.reachability)
             
             let realm = try! Realm()
             let results = realm.objects(User.self)

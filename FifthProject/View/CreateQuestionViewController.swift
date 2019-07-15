@@ -43,13 +43,13 @@ class CreateQuestionTableViewController: UITableViewController {
         timeUnitPickerView.tag = 1
         timePeriodPickerView.tag = 2
         
-        Observable.just(Singleton.targetNumbers)
+        Observable.just(Constant.targetNumbers)
             .bind(to: targetNumberPickerView.rx.itemTitles) { _, targetNumber in
                 return String(targetNumber)
             }
             .disposed(by: disposeBag)
         
-        Observable.just(Singleton.timeUnits)
+        Observable.just(Constant.timeUnits)
             .bind(to: timeUnitPickerView.rx.itemTitles) { _, unit in
                 return unit
             }

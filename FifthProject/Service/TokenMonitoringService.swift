@@ -19,7 +19,7 @@ class TokenMonitoringService {
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(setToken), name: NSNotification.Name("getToken"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(setToken), name: NSNotification.Name("updateToken"), object: nil)
-        Singleton.getToken()
+        Common.getToken()
     }
     
     @objc func setToken(notification: NSNotification) {
@@ -28,8 +28,8 @@ class TokenMonitoringService {
             return
         }
         
-        let now = Singleton.getNowStringFormat()
-        let userId = Singleton.uid
+        let now = Common.getNowStringFormat()
+        let userId = Constant.uid
         
         self.db.collection("users").document(userId).updateData([
             "token": userInfo["token"] as? String ?? "",

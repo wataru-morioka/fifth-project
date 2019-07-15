@@ -27,13 +27,13 @@ class DetailOthersQuestionViewModel {
     }
     
     func answer() {
-        if !Singleton.isOnline {
+        if !Common.isOnline {
             self.answerResult.accept(false)
             return
         }
         
-        let userId = Singleton.uid
-        let now = Singleton.getNowStringFormat()
+        let userId = Constant.uid
+        let now = Common.getNowStringFormat()
         
         //firebase登録
         db.collection("answers").addDocument(data: [

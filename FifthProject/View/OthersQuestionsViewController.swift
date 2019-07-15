@@ -22,7 +22,7 @@ class OthersQuestionsViewController: UITableViewController {
         super.viewDidLoad()
         
         self.questionList = realm.objects(Question.self)
-            .filter("owner == %@", Singleton.others)
+            .filter("owner == %@", Constant.others)
             .filter("deleteFlag == %@", false)
             .sorted(byKeyPath: "id", ascending: false)
         
@@ -71,7 +71,7 @@ class OthersQuestionsViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "othersQuestionCell", for: indexPath)
         
         let submitDateTimeLabel = cell.viewWithTag(1) as! UILabel
-        submitDateTimeLabel.text = Singleton.changeToLocalDateTime(target: questionList[indexPath.row].createdDateTime)
+        submitDateTimeLabel.text = Common.changeToLocalDateTime(target: questionList[indexPath.row].createdDateTime)
         
         let askingLabel = cell.viewWithTag(2) as! UILabel
         askingLabel.isHidden = questionList[indexPath.row].determinationFlag
@@ -80,7 +80,7 @@ class OthersQuestionsViewController: UITableViewController {
         determinationLabel.isHidden = !(questionList[indexPath.row].determinationFlag && !questionList[indexPath.row].confirmationFlag)
         
         let timeLimitLabel = cell.viewWithTag(4) as! UILabel
-        timeLimitLabel.text = Singleton.changeToLocalDateTime(target: questionList[indexPath.row].timeLimit!)
+        timeLimitLabel.text = Common.changeToLocalDateTime(target: questionList[indexPath.row].timeLimit!)
         
         let targetNumberLabel = cell.viewWithTag(5) as! UILabel
         targetNumberLabel.text = String(questionList[indexPath.row].targetNumber) + "人"

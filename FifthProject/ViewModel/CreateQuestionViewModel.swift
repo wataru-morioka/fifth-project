@@ -48,12 +48,12 @@ class CreateQuestionViewModel {
         
         input.timeUnit.bind(to: timeUnit).disposed(by: disposeBag)
         input.timeUnit.map{ unit in
-            Singleton.timeUnitDictionary[unit]!
+            Constant.timeUnitDictionary[unit]!
         }.bind(to: insertTimeUnit)
         .disposed(by: disposeBag)
         
         input.timeUnit.map{ unit in
-            Singleton.timePeriodDictionary[unit]!
+            Constant.timePeriodDictionary[unit]!
         }.bind(to: timePeriodArray)
         .disposed(by: disposeBag)
     }
@@ -78,17 +78,17 @@ class CreateQuestionViewModel {
     }
     
     func submitQuestion() {
-        if !Singleton.isOnline {
+        if !Common.isOnline {
             self.submitResult.accept(false)
             return
         }
         
-        let userId = Singleton.uid
-        let now = Singleton.getNowStringFormat()
+        let userId = Constant.uid
+        let now = Common.getNowStringFormat()
         let question = Question()
         
         question.uid = userId
-        question.owner = Singleton.own
+        question.owner = Constant.own
         question.question = insertQuestioin.value.trimingLeftRight()
         question.answer1 = insertAnswer1.value.trimingLeftRight()
         question.answer2 = insertAnswer2.value.trimingLeftRight()

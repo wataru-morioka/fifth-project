@@ -17,8 +17,9 @@ class ServerMonitoringService {
     let db = Firestore.firestore()
     let realm = try! Realm()
     let uid = Auth.auth().currentUser!.uid
+    static let runningProcess = ServerMonitoringService()
     
-    init() {
+    private init() {
         fetchNewQuestion()
         fetchOwnQuestionnResult()
         fetchOhersQuestioinResult()
@@ -37,12 +38,12 @@ class ServerMonitoringService {
                 let documentId = $0.documentID
                 let target = $0.data()
                 let serverQuestionId = target["serverQuestionId"] as! String
-                let now = Singleton.getNowStringFormat()
+                let now = Common.getNowStringFormat()
                 
                 self.db.collection("questions").document(serverQuestionId).getDocument{ (document, error) in
                     let question = Question()
                     question.serverQuestionId = serverQuestionId
-                    question.owner = Singleton.others
+                    question.owner = Constant.others
                     question.uid = self.uid
                     question.question = document?.data()!["question"] as! String
                     question.answer1 = document?.data()!["answer1"] as! String
@@ -50,15 +51,11 @@ class ServerMonitoringService {
                     question.timeLimit = target["timeLimit"] as? String
                     question.targetNumber = document?.data()!["targetNumber"] as! Int
                     question.createdDateTime = now
-                    do {
-                        try self.realm.write {
-                            let _ = question.save()
-                        }
-                    } catch {
-                        print("質問データがすでに存在しています")
+                    try! self.realm.write {
+                        let _ = question.save()
                     }
                    
-                    print("新着質問登録完了")
+                    print("新着質問受信")
                     self.db.collection("targets")
                         .document(documentId)
                         //                        .delete()
@@ -91,7 +88,7 @@ class ServerMonitoringService {
                 let documentId = $0.documentID
                 let serverQuestion = $0.data()
                 let clientQuestionId = serverQuestion["clientQuestionId"] as! Int64
-                let now = Singleton.getNowStringFormat()
+                let now = Common.getNowStringFormat()
                 
                 let question = self.realm.objects(Question.self).filter("id == %@", clientQuestionId).first!
                 try! self.realm.write {
@@ -133,9 +130,9 @@ class ServerMonitoringService {
                 let documentId = $0.documentID
                 let target = $0.data()
                 let serverQuestionId = target["serverQuestionId"] as! String
-                let now = Singleton.getNowStringFormat()
+                let now = Common.getNowStringFormat()
                 
-                let question = self.realm.objects(Question.self).filter("serverQuestionId == %@", serverQuestionId).first!
+                guard let question = self.realm.objects(Question.self).filter("serverQuestionId == %@", serverQuestionId).first else { return }
                 
                 self.db.collection("questions").document(serverQuestionId).getDocument{ (document, error) in
                     try! self.realm.write {

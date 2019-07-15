@@ -87,7 +87,7 @@ class DetailOthersQuestionViewController: UITableViewController {
         questionView.text = questionDetail.question
         answer1View.text = questionDetail.answer1
         answer2View.text = questionDetail.answer2
-        timeLimitLabel.text = Singleton.changeToLocalDateTime(target: questionDetail.timeLimit!)
+        timeLimitLabel.text = Common.changeToLocalDateTime(target: questionDetail.timeLimit!)
         targetNumberLabel.text = String(questionDetail.targetNumber) + "人"
         
         //タイムリミットが過ぎていた場合

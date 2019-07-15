@@ -24,25 +24,25 @@ class RegistrationViewModel {
     var token: String? = ""
     
     init (input: (region: Observable<String>, age: Observable<Int>)) {
-        self.insertRegion = BehaviorRelay<String>(value: realm.objects(User.self).first?.region ?? Singleton.regions[0])
-        self.insertAge = BehaviorRelay<Int>(value: realm.objects(User.self).first?.age ?? Singleton.ages[0])
+        self.insertRegion = BehaviorRelay<String>(value: realm.objects(User.self).first?.region ?? Constant.regions[0])
+        self.insertAge = BehaviorRelay<Int>(value: realm.objects(User.self).first?.age ?? Constant.ages[0])
         
         input.region.bind(to: insertRegion).disposed(by: disposeBag)
         input.age.bind(to: insertAge).disposed(by: disposeBag)
         
         NotificationCenter.default.addObserver(self, selector: #selector(setToken), name: NSNotification.Name("getToken"), object: nil)
-        Singleton.getToken()
+        Common.getToken()
     }
     
     func registerUser() {
-        if !Singleton.isOnline {
+        if !Common.isOnline {
             self.registerResult.accept(false)
             return
         }
         
-        let userId = Singleton.uid
+        let userId = Constant.uid
         
-        let now = Singleton.getNowStringFormat()
+        let now = Common.getNowStringFormat()
         
         //firebase登録
         db.collection("users").document(userId).setData([
@@ -65,7 +65,7 @@ class RegistrationViewModel {
             user.uid = userId
             user.region = self.insertRegion.value
             user.age = self.insertAge.value
-            user.createdDateTime = Singleton.getNowStringFormat()
+            user.createdDateTime = Common.getNowStringFormat()
             
             //Realm登録
             try! self.realm.write {
@@ -84,13 +84,13 @@ class RegistrationViewModel {
     }
     
     func updateUser() {
-        if !Singleton.isOnline {
+        if !Common.isOnline {
             self.updateResult.accept(false)
             return
         }
         
-        let now = Singleton.getNowStringFormat()
-        let userId = Singleton.uid
+        let now = Common.getNowStringFormat()
+        let userId = Constant.uid
         
         //firebase登録
         db.collection("users").document(userId).updateData([

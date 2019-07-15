@@ -30,13 +30,13 @@ class UserInfoViewController: UIViewController {
         regionPickerView.tag = 0
         agePickerView.tag = 1
         
-        Observable.just(Singleton.regions)
+        Observable.just(Constant.regions)
             .bind(to: regionPickerView.rx.itemTitles) { _, region in
                 return region
             }
             .disposed(by: disposeBag)
         
-        Observable.just(Singleton.ages)
+        Observable.just(Constant.ages)
             .bind(to: agePickerView.rx.itemTitles) { _, age in
                 return String(age)
             }
@@ -48,8 +48,8 @@ class UserInfoViewController: UIViewController {
             )
         )
         
-        regionPickerView.selectRow(Singleton.regions.firstIndex(of: self.realm.objects(User.self).first!.region)!, inComponent: 0, animated: true)
-        agePickerView.selectRow(Singleton.ages.firstIndex(of: self.realm.objects(User.self).first!.age)!, inComponent: 0, animated: true)
+        regionPickerView.selectRow(Constant.regions.firstIndex(of: self.realm.objects(User.self).first!.region)!, inComponent: 0, animated: true)
+        agePickerView.selectRow(Constant.ages.firstIndex(of: self.realm.objects(User.self).first!.age)!, inComponent: 0, animated: true)
 
         let swipeR = UISwipeGestureRecognizer()
         swipeR.direction = .right
@@ -115,9 +115,9 @@ class UserInfoViewController: UIViewController {
     func pickerView(_ pickerView: UIPickerView,
                     numberOfRowsInComponent component: Int) -> Int {
         if (pickerView.tag == 0){
-            return Singleton.regions.count
+            return Constant.regions.count
         }
-        return Singleton.ages.count
+        return Constant.ages.count
     }
     
     // 画面から非表示になる直後に呼ばれます。
@@ -125,7 +125,7 @@ class UserInfoViewController: UIViewController {
     override func viewDidDisappear(_: Bool) {
 //        super.viewDidDisappear(animated)
         print("viewDidDisappear")
-        regionPickerView.selectRow(Singleton.regions.firstIndex(of: self.realm.objects(User.self).first!.region)!, inComponent: 0, animated: true)
-        agePickerView.selectRow(Singleton.ages.firstIndex(of: self.realm.objects(User.self).first!.age)!, inComponent: 0, animated: true)
+        regionPickerView.selectRow(Constant.regions.firstIndex(of: self.realm.objects(User.self).first!.region)!, inComponent: 0, animated: true)
+        agePickerView.selectRow(Constant.ages.firstIndex(of: self.realm.objects(User.self).first!.age)!, inComponent: 0, animated: true)
     }
 }
