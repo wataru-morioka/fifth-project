@@ -617,7 +617,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="list" id="Bf3-ND-5Rb"/>
                     <connections>
-                        <segue destination="cvb-ct-hAs" kind="show" id="0Ax-an-fR2"/>
+                        <segue destination="cvb-ct-hAs" kind="show" identifier="toDetailOthersQuestion" id="0Ax-an-fR2"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sSc-VR-jJS" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1060,10 +1060,10 @@
             </objects>
             <point key="canvasLocation" x="-1049.2753623188407" y="-4676.7857142857138"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--Main Tab Bar View Controller-->
         <scene sceneID="yl2-sM-qoP">
             <objects>
-                <tabBarController storyboardIdentifier="MainViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="49e-Tb-3d3" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="MainViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="49e-Tb-3d3" customClass="MainTabBarViewController" customModule="FifthProject" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" id="W28-zg-YXA">
                         <rect key="frame" x="0.0" y="975" width="768" height="49"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -1090,7 +1090,7 @@
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="tintColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="sectionIndexBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <view key="tableFooterView" contentMode="scaleToFill" id="O4X-7s-FQ5">
+                        <view key="tableFooterView" contentMode="scaleToFill" misplaced="YES" id="O4X-7s-FQ5">
                             <rect key="frame" x="0.0" y="420" width="414" height="120"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
@@ -1275,7 +1275,7 @@
                         </connections>
                     </tableView>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <tabBarItem key="tabBarItem" systemItem="search" id="eZ2-oV-WCr"/>
+                    <tabBarItem key="tabBarItem" tag="3" systemItem="search" id="eZ2-oV-WCr"/>
                     <connections>
                         <outlet property="answer1View" destination="KDl-wT-FF6" id="Fyk-eZ-TkH"/>
                         <outlet property="answer2View" destination="Lwa-Ii-AhJ" id="kOe-e5-1pK"/>
@@ -1394,7 +1394,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="BSo-la-Vpl"/>
                     </view>
-                    <tabBarItem key="tabBarItem" systemItem="favorites" id="qFw-I0-wgV"/>
+                    <tabBarItem key="tabBarItem" tag="4" systemItem="favorites" id="qFw-I0-wgV"/>
                     <connections>
                         <outlet property="agePickerView" destination="aS5-en-h30" id="nIj-NF-6cx"/>
                         <outlet property="authentication" destination="HH3-a4-xYX" id="Efw-Ph-Mgt"/>
@@ -1411,7 +1411,7 @@
         <scene sceneID="7C9-8F-RKd">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="C79-t7-MP2" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" systemItem="mostViewed" id="iF4-d2-MEF"/>
+                    <tabBarItem key="tabBarItem" tag="1" systemItem="mostViewed" id="iF4-d2-MEF"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="cRn-OZ-XTy">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
@@ -1431,7 +1431,7 @@
         <scene sceneID="0Pc-88-Dvl">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="5u0-Eq-B8j" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" systemItem="contacts" id="Ura-J6-CV8"/>
+                    <tabBarItem key="tabBarItem" tag="2" systemItem="contacts" id="Ura-J6-CV8"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="Fqc-o3-s72">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>

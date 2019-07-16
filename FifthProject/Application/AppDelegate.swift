@@ -46,6 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             application.registerUserNotificationSettings(settings)
         }
         
+        application.applicationIconBadgeNumber = Common.getUnconfirmCount()
         application.registerForRemoteNotifications()
         
         return true
@@ -57,11 +58,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         case .inactive:
             print("バックグアウンドからプッシュ通知をタップ")
             print(userInfo)
+            application.applicationIconBadgeNumber = Common.getUnconfirmCount()
         case .active:
             print("フォアグランドでプッシュ通知を受信")
             print(userInfo)
+            application.applicationIconBadgeNumber = Common.getUnconfirmCount()
         case .background:
             print(userInfo)
+            application.applicationIconBadgeNumber = Common.getUnconfirmCount()
         default:
             break
         }
@@ -78,11 +82,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
         print("アプリバックグラウンド")
         ServerMonitoringService.runningProcess.detachListener()
+        reachability.stopNotifier()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         print("アプリフォアグラウンド")
+        let _ = NetworkMonitoringService(reachability: self.reachability)
         ServerMonitoringService.runningProcess.attachListener()
     }
 
@@ -94,6 +100,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         print("アプリ終了")
         ServerMonitoringService.runningProcess.detachListener()
+        reachability.stopNotifier()
     }
     
     @available(iOS 9.0, *)

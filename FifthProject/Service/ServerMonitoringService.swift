@@ -20,20 +20,28 @@ class ServerMonitoringService {
     var newQuestionListener: ListenerRegistration!
     var ownResultListener: ListenerRegistration!
     var othersResultListener: ListenerRegistration!
+    var attachFlag = false
     static let runningProcess = ServerMonitoringService()
     
     private init() {}
     
     func attachListener() {
+        print("サーバ監視開始")
+        if self.attachFlag {
+            return
+        }
         fetchNewQuestion()
         fetchOwnQuestionnResult()
         fetchOhersQuestioinResult()
+        self.attachFlag = true
     }
     
     func detachListener() {
+        print("サーバ監視終了")
         self.newQuestionListener.remove()
         self.ownResultListener.remove()
         self.othersResultListener.remove()
+        self.attachFlag = false
     }
     
     private func fetchNewQuestion(){
@@ -150,6 +158,7 @@ class ServerMonitoringService {
                         question.answer1number = document?.data()!["answer1number"] as! Int
                         question.answer2number = document?.data()!["answer2number"] as! Int
                         question.determinationFlag = true
+                        question.confirmationFlag = false
                         question.modifiedDateTime = now
                     }
                     print("他人の質問集計完了")

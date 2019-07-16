@@ -55,4 +55,20 @@ class Common {
             }
         }
     }
+    
+    static func getUnconfirmCount() -> Int {
+        return getUncorimCount(owner: Constant.own) + getUncorimCount(owner: Constant.others)
+    }
+    
+    static func getUncorimCount(owner: String) -> Int {
+        let realm = try! Realm()
+        switch owner{
+        case Constant.own:
+            return realm.objects(Question.self).filter("owner = %@ and determinationFlag == %@ and confirmationFlag == %@", Constant.own, true, false).count
+        case Constant.others:
+            return realm.objects(Question.self).filter("owner = %@ and confirmationFlag == %@", Constant.others, false).count
+        default:
+            return 0
+        }
+    }
 }

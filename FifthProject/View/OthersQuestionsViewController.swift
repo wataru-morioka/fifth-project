@@ -28,6 +28,8 @@ class OthersQuestionsViewController: UITableViewController {
         
         Observable.collection(from: questionList).subscribe(onNext: { _ in
             self.tableView.reloadData()
+            let count = Common.getUncorimCount(owner: Constant.others)
+            self.parent?.tabBarItem.badgeValue = count == 0 ? nil : String(count)
         }).disposed(by: disposeBag)
         
         let swipeL = UISwipeGestureRecognizer()
@@ -73,8 +75,8 @@ class OthersQuestionsViewController: UITableViewController {
         let submitDateTimeLabel = cell.viewWithTag(1) as! UILabel
         submitDateTimeLabel.text = Common.changeToLocalDateTime(target: questionList[indexPath.row].createdDateTime)
         
-        let askingLabel = cell.viewWithTag(2) as! UILabel
-        askingLabel.isHidden = questionList[indexPath.row].determinationFlag
+        let newArrivalLabel = cell.viewWithTag(2) as! UILabel
+        newArrivalLabel.isHidden = questionList[indexPath.row].determinationFlag || questionList[indexPath.row].confirmationFlag
         
         let determinationLabel = cell.viewWithTag(3) as! UILabel
         determinationLabel.isHidden = !(questionList[indexPath.row].determinationFlag && !questionList[indexPath.row].confirmationFlag)
@@ -140,6 +142,12 @@ class OthersQuestionsViewController: UITableViewController {
     }
     
     func moveToDetailView(indexPath: IndexPath) {
+        let questionId = questionList[indexPath.row].id
+        let question = self.realm.objects(Question.self).filter("id == %@", questionId).first!
+        try! self.realm.write {
+            question.confirmationFlag = true
+        }
+        
         let storyboard: UIStoryboard = self.storyboard!
         let nextView = storyboard.instantiateViewController(withIdentifier: "DetailOthersQuestionViewController") as! DetailOthersQuestionViewController
         nextView.questionId = questionList[indexPath.row].id
