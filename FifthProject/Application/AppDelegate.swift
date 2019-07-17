@@ -46,7 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             application.registerUserNotificationSettings(settings)
         }
         
-        application.applicationIconBadgeNumber = Common.getUnconfirmCount()
+//        application.applicationIconBadgeNumber = Common.getUnconfirmCount()
         application.registerForRemoteNotifications()
         
         return true
@@ -54,18 +54,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        
+        application.applicationIconBadgeNumber += 1
+        
         switch application.applicationState {
         case .inactive:
             print("バックグアウンドからプッシュ通知をタップ")
             print(userInfo)
-            application.applicationIconBadgeNumber = Common.getUnconfirmCount()
         case .active:
             print("フォアグランドでプッシュ通知を受信")
             print(userInfo)
-            application.applicationIconBadgeNumber = Common.getUnconfirmCount()
         case .background:
             print(userInfo)
-            application.applicationIconBadgeNumber = Common.getUnconfirmCount()
         default:
             break
         }

@@ -102,6 +102,7 @@ class ServerMonitoringService {
         self.ownResultListener = db.collection("questions")
         .whereField("uid", isEqualTo: uid)
         .whereField("determinationFlag", isEqualTo: true)
+        .whereField("finalPushFlag", isEqualTo: true)
         .whereField("resultReceiveFlag", isEqualTo: false)
         .addSnapshotListener { querySnapshot, error in
             guard let documents = querySnapshot?.documents else {
@@ -144,6 +145,7 @@ class ServerMonitoringService {
         self.othersResultListener = db.collection("targets")
         .whereField("uid", isEqualTo: uid)
         .whereField("determinationFlag", isEqualTo: true)
+        .whereField("finalPushFlag", isEqualTo: true)
         .whereField("resultReceiveFlag", isEqualTo: false)
         .addSnapshotListener { querySnapshot, error in
             guard let documents = querySnapshot?.documents else {

@@ -7,13 +7,25 @@
 //
 
 import UIKit
+import RealmSwift
+import RxSwift
+import RxRealm
 
 class MainTabBarViewController: UITabBarController {
+    let realm = try! Realm()
+    let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        //ボタンの個数ぶんループする。
+        
+        setBadgeValue()
+        
+        Observable.collection(from: realm.objects(Question.self)).subscribe(onNext: { _ in
+            self.setBadgeValue()
+        }).disposed(by: self.disposeBag)
+    }
+    
+    private func setBadgeValue() {
         for item in tabBar.items! {
             switch item.tag {
             case 1:

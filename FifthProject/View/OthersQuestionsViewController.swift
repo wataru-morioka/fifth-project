@@ -28,8 +28,6 @@ class OthersQuestionsViewController: UITableViewController {
         
         Observable.collection(from: questionList).subscribe(onNext: { _ in
             self.tableView.reloadData()
-            let count = Common.getUncorimCount(owner: Constant.others)
-            self.parent?.tabBarItem.badgeValue = count == 0 ? nil : String(count)
         }).disposed(by: disposeBag)
         
         let swipeL = UISwipeGestureRecognizer()
@@ -146,6 +144,10 @@ class OthersQuestionsViewController: UITableViewController {
         let question = self.realm.objects(Question.self).filter("id == %@", questionId).first!
         try! self.realm.write {
             question.confirmationFlag = true
+        }
+        
+        DispatchQueue.main.async {
+            UIApplication.shared.applicationIconBadgeNumber -= 1
         }
         
         let storyboard: UIStoryboard = self.storyboard!
