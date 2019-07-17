@@ -39,10 +39,6 @@ class CreateQuestionTableViewController: UITableViewController {
         swipeR.addTarget(self, action: #selector(self.swipeRight(sender:)))
         self.view.addGestureRecognizer(swipeR)
         
-        targetNumberPickerView.tag = 0
-        timeUnitPickerView.tag = 1
-        timePeriodPickerView.tag = 2
-        
         Observable.just(Constant.targetNumbers)
             .bind(to: targetNumberPickerView.rx.itemTitles) { _, targetNumber in
                 return String(targetNumber)
@@ -69,6 +65,7 @@ class CreateQuestionTableViewController: UITableViewController {
                 return String(period)
             }
             .disposed(by: disposeBag)
+        
         viewModel.insertQuestioin.bind(to: questionView.rx.text).disposed(by: disposeBag)
         viewModel.insertAnswer1.bind(to: answer1View.rx.text).disposed(by: disposeBag)
         viewModel.insertAnswer2.bind(to: answer2View.rx.text).disposed(by: disposeBag)
@@ -82,7 +79,7 @@ class CreateQuestionTableViewController: UITableViewController {
                     self.showAlert(title: "入力エラー", message: "入力していない項目があります")
                     return
                 }
-                
+                self.hideKeyboard()
                 let alert = UIAlertController(title: "送信確認", message: "本当に送信しますか？", preferredStyle: UIAlertController.Style.alert)
                 let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
                     self.submitButton.rx.isEnabled.onNext(false)
@@ -100,9 +97,11 @@ class CreateQuestionTableViewController: UITableViewController {
                 self.submitButton.rx.isEnabled.onNext(true)
                 if !result {
                     self.showAlert(title: "エラー", message: "サーバとの通信に失敗しました")
+                    self.hideKeyboard()
                     return
                 }
                 self.showAlert(title: "送信完了", message: "送信が完了しました")
+                self.hideKeyboard()
             }
             , onError: { _ in
                 print("error")

@@ -20,7 +20,7 @@ class CreateQuestionViewModel {
     let insertAnswer2 = BehaviorRelay<String>(value: "")
     //TODO 初期値
     let insertTargetNumber = BehaviorRelay<Int>(value: 3)
-    let insertTimtPeriod = BehaviorRelay<Int>(value: 5)
+    let insertTimePeriod = BehaviorRelay<Int>(value: 5)
     let insertTimeUnit = BehaviorRelay<Int>(value: 1)
     let timeUnit = BehaviorRelay<String>(value: "分")
     let isValid = BehaviorRelay<Bool>(value: false)
@@ -44,7 +44,7 @@ class CreateQuestionViewModel {
         bindIsValid(inputArea: input.answer2)
         
         input.targetNumber.bind(to: insertTargetNumber).disposed(by: disposeBag)
-        input.timePeriod.bind(to: insertTimtPeriod).disposed(by: disposeBag)
+        input.timePeriod.bind(to: insertTimePeriod).disposed(by: disposeBag)
         
         input.timeUnit.bind(to: timeUnit).disposed(by: disposeBag)
         input.timeUnit.map{ unit in
@@ -78,7 +78,7 @@ class CreateQuestionViewModel {
     }
     
     func submitQuestion() {
-        if !Common.isOnline {
+        if !NetworkMonitoringService.isOnline {
             self.submitResult.accept(false)
             return
         }
@@ -93,7 +93,7 @@ class CreateQuestionViewModel {
         question.answer1 = insertAnswer1.value.trimingLeftRight()
         question.answer2 = insertAnswer2.value.trimingLeftRight()
         question.targetNumber = insertTargetNumber.value
-        question.timePeriod = insertTimtPeriod.value
+        question.timePeriod = insertTimePeriod.value
         question.timeUnit = timeUnit.value
         question.createdDateTime = now
 
@@ -115,7 +115,8 @@ class CreateQuestionViewModel {
             "answer1number": 0,
             "answer2number": 0,
             "targetNumber": insertTargetNumber.value,
-            "timePeriod": insertTimtPeriod.value * insertTimeUnit.value,
+            "minutes": insertTimePeriod.value * insertTimeUnit.value,
+            "timePeriod": insertTimePeriod.value,
             "timeUnit": timeUnit.value,
             "timeLimit": "2999-01-01 00:00:00",
             "askFlag": false,

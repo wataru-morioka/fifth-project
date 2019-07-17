@@ -35,7 +35,7 @@ class RegistrationViewModel {
     }
     
     func registerUser() {
-        if !Common.isOnline {
+        if !NetworkMonitoringService.isOnline {
             self.registerResult.accept(false)
             return
         }
@@ -84,7 +84,7 @@ class RegistrationViewModel {
     }
     
     func updateUser() {
-        if !Common.isOnline {
+        if !NetworkMonitoringService.isOnline {
             self.updateResult.accept(false)
             return
         }

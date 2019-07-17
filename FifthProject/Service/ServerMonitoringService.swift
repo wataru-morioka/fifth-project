@@ -59,6 +59,11 @@ class ServerMonitoringService {
                 let serverQuestionId = target["serverQuestionId"] as! String
                 let now = Common.getNowStringFormat()
                 
+                let alreadyCount = self.realm.objects(Question.self).filter("serverQuestionId == %@", serverQuestionId).count
+                if alreadyCount > 0 {
+                    return
+                }
+                
                 self.db.collection("questions").document(serverQuestionId).getDocument{ (document, error) in
                     let question = Question()
                     question.serverQuestionId = serverQuestionId
@@ -109,7 +114,7 @@ class ServerMonitoringService {
                 let clientQuestionId = serverQuestion["clientQuestionId"] as! Int64
                 let now = Common.getNowStringFormat()
                 
-                let question = self.realm.objects(Question.self).filter("id == %@", clientQuestionId).first!
+                guard let question = self.realm.objects(Question.self).filter("id == %@ and determinationFlag == %@", clientQuestionId, false).first else { return }
                 try! self.realm.write {
                     question.answer1number = serverQuestion["answer1number"] as! Int
                     question.answer2number = serverQuestion["answer2number"] as! Int
@@ -151,7 +156,7 @@ class ServerMonitoringService {
                 let serverQuestionId = target["serverQuestionId"] as! String
                 let now = Common.getNowStringFormat()
                 
-                guard let question = self.realm.objects(Question.self).filter("serverQuestionId == %@", serverQuestionId).first else { return }
+                guard let question = self.realm.objects(Question.self).filter("serverQuestionId == %@ and determinationFlag == %@", serverQuestionId, false).first else { return }
                 
                 self.db.collection("questions").document(serverQuestionId).getDocument{ (document, error) in
                     try! self.realm.write {

@@ -12,8 +12,6 @@ import Firebase
 import RealmSwift
 
 class Common {
-    static var isOnline = true
-    
     func moveToView(fromView: UIWindow?, toView: String) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let initialViewController = storyboard.instantiateViewController(withIdentifier: toView)

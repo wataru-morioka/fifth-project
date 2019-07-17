@@ -27,7 +27,7 @@ class DetailOthersQuestionViewModel {
     }
     
     func answer() {
-        if !Common.isOnline {
+        if !NetworkMonitoringService.isOnline {
             self.answerResult.accept(false)
             return
         }
@@ -39,7 +39,7 @@ class DetailOthersQuestionViewModel {
         db.collection("answers").addDocument(data: [
             "uid": userId,
             "serverQuestionId": self.serverQuestionId,
-            "decisioin": self.decision.value,
+            "decision": self.decision.value,
             "determinationFlag": false,
             "createdDateTime": now
         ]) { error in
