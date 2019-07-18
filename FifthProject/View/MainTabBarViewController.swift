@@ -22,6 +22,9 @@ class MainTabBarViewController: UITabBarController {
         
         Observable.collection(from: realm.objects(Question.self)).subscribe(onNext: { _ in
             self.setBadgeValue()
+            DispatchQueue.main.async {
+                UIApplication.shared.applicationIconBadgeNumber = Common.getUnconfirmCount()
+            }
         }).disposed(by: self.disposeBag)
     }
     

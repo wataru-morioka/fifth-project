@@ -53,17 +53,20 @@ class ServerMonitoringService {
                 print("Error fetching documents: \(error!)")
                 return
             }
+            
+            var serverQuestionIdArray = [String]()
             documents.forEach{
                 let documentId = $0.documentID
                 let target = $0.data()
                 let serverQuestionId = target["serverQuestionId"] as! String
-                let now = Common.getNowStringFormat()
+                
+                if serverQuestionIdArray.contains(serverQuestionId) { return }
+                serverQuestionIdArray.append(serverQuestionId)
                 
                 let alreadyCount = self.realm.objects(Question.self).filter("serverQuestionId == %@", serverQuestionId).count
-                if alreadyCount > 0 {
-                    return
-                }
+                if alreadyCount > 0 { return }
                 
+                let now = Common.getNowStringFormat()
                 self.db.collection("questions").document(serverQuestionId).getDocument{ (document, error) in
                     let question = Question()
                     question.serverQuestionId = serverQuestionId

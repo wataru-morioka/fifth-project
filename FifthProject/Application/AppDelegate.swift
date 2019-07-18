@@ -39,14 +39,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
             UNUserNotificationCenter.current().requestAuthorization(
                 options: authOptions,
-                completionHandler: {_, _ in })
+                completionHandler: {_, _ in})
         } else {
             let settings: UIUserNotificationSettings =
                 UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
             application.registerUserNotificationSettings(settings)
         }
         
-//        application.applicationIconBadgeNumber = Common.getUnconfirmCount()
         application.registerForRemoteNotifications()
         
         return true
@@ -54,9 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
-        application.applicationIconBadgeNumber += 1
-        
+
         switch application.applicationState {
         case .inactive:
             print("バックグアウンドからプッシュ通知をタップ")
@@ -65,13 +62,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             print("フォアグランドでプッシュ通知を受信")
             print(userInfo)
         case .background:
+            print("バックグラウンドでプッシュ通知受信")
             print(userInfo)
         default:
             break
         }
         completionHandler(UIBackgroundFetchResult.newData)
     }
-
+    
+    // アプリがフォアグラウンドの時に通知を受け取った時に呼ばれるメソッド
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .sound])  // 通知バナー表示、通知音の再生を指定
+    }
+    
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.

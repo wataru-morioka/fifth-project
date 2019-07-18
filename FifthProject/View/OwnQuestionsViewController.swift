@@ -138,11 +138,6 @@ class OwnQuestionsViewController: UITableViewController {
         try! self.realm.write {
             question.confirmationFlag = true
         }
-        
-        DispatchQueue.main.async {
-            UIApplication.shared.applicationIconBadgeNumber -= 1
-        }
-        
         let storyboard: UIStoryboard = self.storyboard!
         let nextView = storyboard.instantiateViewController(withIdentifier: "DetailOwnQuestionViewController") as! DetailOwnQuestionViewController
         nextView.questionId = questionList[indexPath.row].id
