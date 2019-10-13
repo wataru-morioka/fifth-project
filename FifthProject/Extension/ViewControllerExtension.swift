@@ -9,6 +9,7 @@
 import UIKit
 
 extension UIViewController {
+    // 余白部分タップでキーボード非表示機能
     func hideKeyboardWhenTappedAround() {
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.hideKeyboard))
         tap.cancelsTouchesInView = false
@@ -19,3 +20,4 @@ extension UIViewController {
         view.endEditing(true)
     }
 }
+
