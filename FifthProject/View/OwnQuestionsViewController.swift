@@ -20,19 +20,22 @@ class OwnQuestionsViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        // アプリ起動時初期画面のため、firebase認証用idトークン取得、更新イベント検知サービス起動
         let _ = TokenMonitoringService()
 //        let _ = NetworkMonitoringService()
         
+        // 自分の質問履歴取得
         self.questionList = realm.objects(Question.self)
             .filter("owner == %@", Constant.own)
             .filter("deleteFlag == %@", false)
             .sorted(byKeyPath: "id", ascending: false)
         
+        // 画面にセット（ネイティブデータ更新を監視し、リアルタイムに画面に反映）
         Observable.collection(from: questionList).subscribe(onNext: { _ in
             self.tableView.reloadData()
         }).disposed(by: disposeBag)
         
+        // 左スワイプイベント処理登録
         let swipeL = UISwipeGestureRecognizer()
         swipeL.direction = .left
         swipeL.numberOfTouchesRequired = 1
@@ -60,6 +63,7 @@ class OwnQuestionsViewController: UITableViewController {
 //        return 120.0
 //    }
 
+    // ネイティブデータを各テーブル行にセット
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ownQuestionCell", for: indexPath)
         
@@ -84,19 +88,25 @@ class OwnQuestionsViewController: UITableViewController {
         return cell
     }
     
+    // 行タップ時
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // セルの選択を解除
         tableView.deselectRow(at: indexPath, animated: true)
+        // 質問詳細画面へ遷移
         moveToDetailView(indexPath: indexPath)
     }
     
+    // 行をスワイプ時
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        // 「削除ボタン」タップ時
         if editingStyle == .delete {
+            // ネイティブデータ処理
             let questionId = questionList[indexPath.row].id
             let question = self.realm.objects(Question.self).filter("id == %@", questionId).first!
             try! self.realm.write {
                 question.deleteFlag = true
             }
+            // 行削除
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
@@ -128,11 +138,14 @@ class OwnQuestionsViewController: UITableViewController {
         return true
     }
     
+    // 行アクセサリボタンタップ時
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        // 詳細画面へ遷移
         moveToDetailView(indexPath: indexPath)
     }
     
     func moveToDetailView(indexPath: IndexPath) {
+        // ネイティブデータの詳細確認フラグを更新
         let questionId = questionList[indexPath.row].id
         let question = self.realm.objects(Question.self).filter("id == %@", questionId).first!
         try! self.realm.write {

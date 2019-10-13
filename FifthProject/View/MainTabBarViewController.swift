@@ -20,6 +20,7 @@ class MainTabBarViewController: UITabBarController {
         
         setBadgeValue()
         
+        // ネイティブの質問の更新情報を監視
         Observable.collection(from: realm.objects(Question.self)).subscribe(onNext: { _ in
             self.setBadgeValue()
             DispatchQueue.main.async {

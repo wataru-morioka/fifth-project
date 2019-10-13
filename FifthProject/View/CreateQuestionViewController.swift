@@ -27,49 +27,53 @@ class CreateQuestionTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // 左スワイプ処理登録
         let swipeL = UISwipeGestureRecognizer()
         swipeL.direction = .left
         swipeL.numberOfTouchesRequired = 1
         swipeL.addTarget(self, action: #selector(self.swipeLeft(sender:)))
         self.view.addGestureRecognizer(swipeL)
-        
+        // 右スワイプ処理登録
         let swipeR = UISwipeGestureRecognizer()
         swipeR.direction = .right
         swipeR.numberOfTouchesRequired = 1
         swipeR.addTarget(self, action: #selector(self.swipeRight(sender:)))
         self.view.addGestureRecognizer(swipeR)
         
+        // 対象人数リストをpickerビューにバインド
         Observable.just(Constant.targetNumbers)
             .bind(to: targetNumberPickerView.rx.itemTitles) { _, targetNumber in
                 return String(targetNumber)
             }
             .disposed(by: disposeBag)
-        
+        // 時間制限リストをpickerビューにバインド
         Observable.just(Constant.timeUnits)
             .bind(to: timeUnitPickerView.rx.itemTitles) { _, unit in
                 return unit
             }
             .disposed(by: disposeBag)
         
+        // 画面リアルタイム値とDB処理管理をviewModel側に移行
         let viewModel = CreateQuestionViewModel(input: (
-            question: questionView.rx.text.orEmpty.asObservable(),
-            answer1: answer1View.rx.text.orEmpty.asObservable(),
-            answer2: answer2View.rx.text.orEmpty.asObservable(),
-            targetNumber: targetNumberPickerView.rx.modelSelected(Int.self).asObservable().map{ $0.first! },
-            timePeriod: timePeriodPickerView.rx.modelSelected(Int.self).asObservable().map{ $0.first! },
-            timeUnit: timeUnitPickerView.rx.modelSelected(String.self).asObservable().map{ $0.first! }
+                question: questionView.rx.text.orEmpty.asObservable(),
+                answer1: answer1View.rx.text.orEmpty.asObservable(),
+                answer2: answer2View.rx.text.orEmpty.asObservable(),
+                targetNumber: targetNumberPickerView.rx.modelSelected(Int.self).asObservable().map{ $0.first! },
+                timePeriod: timePeriodPickerView.rx.modelSelected(Int.self).asObservable().map{ $0.first! },
+                timeUnit: timeUnitPickerView.rx.modelSelected(String.self).asObservable().map{ $0.first! }
             )
         )
         
+        // 新規質問送信成功時の画面値初期化イベントをviewModel側から取得させるため、バインド
         viewModel.timePeriodArray.bind(to: timePeriodPickerView.rx.itemTitles) { _, period in
                 return String(period)
             }
             .disposed(by: disposeBag)
-        
         viewModel.insertQuestioin.bind(to: questionView.rx.text).disposed(by: disposeBag)
         viewModel.insertAnswer1.bind(to: answer1View.rx.text).disposed(by: disposeBag)
         viewModel.insertAnswer2.bind(to: answer2View.rx.text).disposed(by: disposeBag)
         
+        // 対象人数と制限時間の初期値セット
         targetNumberPickerView.selectRow(2, inComponent: 0, animated: true)
         timePeriodPickerView.selectRow(4, inComponent: 0, animated: true)
         
@@ -92,6 +96,7 @@ class CreateQuestionTableViewController: UITableViewController {
                 self.present(alert, animated: true, completion: nil)
         }).disposed(by: disposeBag)
         
+        // DB処理結果イベント取得
         viewModel.submitResult.subscribe(onNext: { result in
                 self.indicator.stopAnimating()
                 self.submitButton.rx.isEnabled.onNext(true)

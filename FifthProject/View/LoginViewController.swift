@@ -15,6 +15,7 @@ class LoginViewController: UIViewController, GIDSignInUIDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // firebase google認証サービス起動
         GIDSignIn.sharedInstance().uiDelegate = self
         GIDSignIn.sharedInstance().signIn()
     }

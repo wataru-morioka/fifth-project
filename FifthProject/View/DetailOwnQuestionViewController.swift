@@ -32,7 +32,9 @@ class DetailOwnQuestionViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // 質問詳細情報取得
         observableQuestion = self.realm.objects(Question.self).filter("id == %@", self.questionId!)
+        // 画面にセット（ネイティブデータ更新を監視し、リアルタイムに画面に反映）
         Observable.collection(from: observableQuestion).subscribe(onNext: { questions in
             self.setDisplay(questionDetail: questions.first!)
         }).disposed(by: disposeBag)

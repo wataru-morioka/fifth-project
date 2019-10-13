@@ -12,6 +12,7 @@ import Firebase
 import RealmSwift
 
 class Common {
+    // 画面遷移
     func moveToView(fromView: UIWindow?, toView: String) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let initialViewController = storyboard.instantiateViewController(withIdentifier: toView)
@@ -33,6 +34,7 @@ class Common {
         return formatter.string(from: Date())
     }
     
+    // ローカルタイム取得
     static func changeToLocalDateTime(target: String) -> String{
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone.current
@@ -42,6 +44,7 @@ class Common {
         return formatter.string(from: localDateTime!)
     }
     
+    // firebase認証用idトークン取得
     static func getToken() {
         InstanceID.instanceID().instanceID { (result, error) in
             if let error = error {
@@ -54,10 +57,12 @@ class Common {
         }
     }
     
+    // 更新した情報をユーザがタップして確認していない件数の総数を取得
     static func getUnconfirmCount() -> Int {
         return getUncorimCount(owner: Constant.own) + getUncorimCount(owner: Constant.others)
     }
     
+    // 上記の件数を、自分の質問か他人の質問かで振り分ける
     static func getUncorimCount(owner: String) -> Int {
         let realm = try! Realm()
         switch owner{

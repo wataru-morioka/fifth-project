@@ -23,27 +23,29 @@ class RegistrationViewController : UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        // google認証によって取得したユーザアカウント情報を画面にセット
         authentication.text = Auth.auth().currentUser?.email ?? Auth.auth().currentUser?.phoneNumber
         
         regionPickerView.tag = 0
         agePickerView.tag = 1
         
+        // 地域リストをpickerビューにバインド
         Observable.just(Constant.regions)
             .bind(to: regionPickerView.rx.itemTitles) { _, region in
                 return region
             }
             .disposed(by: disposeBag)
-        
+        // 年齢リストをpickerビューにバインド
         Observable.just(Constant.ages)
             .bind(to: agePickerView.rx.itemTitles) { _, age in
                 return String(age)
             }
             .disposed(by: disposeBag)
         
+        // 画面リアルタイム値とDB処理管理をviewModel側に移行
         let viewModel = RegistrationViewModel(input: (
-            region: regionPickerView.rx.modelSelected(String.self).asObservable().map{ $0.first! },
-            age: agePickerView.rx.modelSelected(Int.self).asObservable().map{ $0.first! }
+                region: regionPickerView.rx.modelSelected(String.self).asObservable().map{ $0.first! },
+                age: agePickerView.rx.modelSelected(Int.self).asObservable().map{ $0.first! }
             )
         )
         
@@ -53,6 +55,7 @@ class RegistrationViewController : UIViewController {
                 let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
                     self.registerButton.rx.isEnabled.onNext(false)
                     self.indicator.startAnimating()
+                    // 現在値で登録処理
                     viewModel.registerUser()
                 }
                 let ng = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel, handler: nil)
@@ -68,6 +71,7 @@ class RegistrationViewController : UIViewController {
                 print("complete")
         }).disposed(by: disposeBag)
         
+        // DB処理結果イベント取得
         viewModel.registerResult.subscribe(onNext: { result in
                 self.indicator.stopAnimating()
                 if !result {

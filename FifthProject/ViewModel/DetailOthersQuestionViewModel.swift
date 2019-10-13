@@ -22,6 +22,7 @@ class DetailOthersQuestionViewModel {
     var serverQuestionId: String
     
     init(input: Observable<Int>, serverQuestionId: String){
+        // 画面変更値をBehaviorRelayにバインド
         input.bind(to: decision).disposed(by: self.disposeBag)
         self.serverQuestionId = serverQuestionId
     }
@@ -35,7 +36,7 @@ class DetailOthersQuestionViewModel {
         let userId = Constant.uid
         let now = Common.getNowStringFormat()
         
-        //firebase登録
+        // firestore登録
         db.collection("answers").addDocument(data: [
             "uid": userId,
             "serverQuestionId": self.serverQuestionId,
@@ -50,13 +51,14 @@ class DetailOthersQuestionViewModel {
                 return
             }
             print("回答サーバに送信完了")
-            
+            // Realm登録
             let question = self.realm.objects(Question.self).filter("serverQuestionId == %@", self.serverQuestionId).first!
             try! self.realm.write {
                 question.decision = self.decision.value
                 question.modifiedDateTime = now
             }
             print("他人の質問に回答登録完了")
+            // view側にイベント送信
             self.answerResult.accept(true)
         }
     }

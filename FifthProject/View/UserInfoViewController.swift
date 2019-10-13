@@ -24,38 +24,42 @@ class UserInfoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        // google認証によって取得したユーザアカウント情報を画面にセット
         authentication.text = Auth.auth().currentUser?.email ?? Auth.auth().currentUser?.phoneNumber
         
         regionPickerView.tag = 0
         agePickerView.tag = 1
         
+        // 右スワイプ処理登録
+        let swipeR = UISwipeGestureRecognizer()
+        swipeR.direction = .right
+        swipeR.numberOfTouchesRequired = 1
+        swipeR.addTarget(self, action: #selector(self.swipeRight(sender:)))
+        self.view.addGestureRecognizer(swipeR)
+        
+        // 地域リストをpickerビューにバインド
         Observable.just(Constant.regions)
             .bind(to: regionPickerView.rx.itemTitles) { _, region in
                 return region
             }
             .disposed(by: disposeBag)
-        
+        // 年齢リストをpickerビューにバインド
         Observable.just(Constant.ages)
             .bind(to: agePickerView.rx.itemTitles) { _, age in
                 return String(age)
             }
             .disposed(by: disposeBag)
         
+        // 画面リアルタイム値とDB処理管理をviewModel側に移行
         let viewModel = RegistrationViewModel(input: (
             region: regionPickerView.rx.modelSelected(String.self).asObservable().map{x in return x.first!},
             age: agePickerView.rx.modelSelected(Int.self).asObservable().map{x in return x.first!}
             )
         )
         
+        // 初期値セット
         regionPickerView.selectRow(Constant.regions.firstIndex(of: self.realm.objects(User.self).first!.region)!, inComponent: 0, animated: true)
         agePickerView.selectRow(Constant.ages.firstIndex(of: self.realm.objects(User.self).first!.age)!, inComponent: 0, animated: true)
-
-        let swipeR = UISwipeGestureRecognizer()
-        swipeR.direction = .right
-        swipeR.numberOfTouchesRequired = 1
-        swipeR.addTarget(self, action: #selector(self.swipeRight(sender:)))
-        self.view.addGestureRecognizer(swipeR)
         
         updateButton.rx.tap.subscribe(
             onNext: { _ in
@@ -78,6 +82,7 @@ class UserInfoViewController: UIViewController {
                 print("complete")
         }).disposed(by: disposeBag)
         
+        // DB処理結果イベント取得
         viewModel.updateResult.subscribe(onNext: { result in
                 self.updateButton.rx.isEnabled.onNext(true)
                 self.indicator.stopAnimating()

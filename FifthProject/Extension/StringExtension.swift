@@ -9,6 +9,7 @@
 import Foundation
 
 extension String {
+    // 文字列右端の空白削除
     func rightTrimmingCharacters(in set: CharacterSet) -> String {
         for c in self.reversed().enumerated() {
             let isMatch = c.element.unicodeScalars.contains { set.contains($0) }
@@ -19,6 +20,7 @@ extension String {
         return ""
     }
     
+    // 文字列左端の空白削除
     func leftTrimmingCharacters(in set: CharacterSet) -> String {
         for c in self.enumerated() {
             let isMatch = c.element.unicodeScalars.contains { set.contains($0) }
@@ -29,6 +31,7 @@ extension String {
         return ""
     }
 
+    // 文字列両端の空白削除
     func trimingLeftRight() -> String {
         return self.leftTrimmingCharacters(in: .whitespacesAndNewlines).rightTrimmingCharacters(in: .whitespacesAndNewlines)
     }

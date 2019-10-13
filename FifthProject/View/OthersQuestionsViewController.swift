@@ -21,21 +21,24 @@ class OthersQuestionsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // 他人の質問履歴取得
         self.questionList = realm.objects(Question.self)
             .filter("owner == %@", Constant.others)
             .filter("deleteFlag == %@", false)
             .sorted(byKeyPath: "id", ascending: false)
         
+        // 画面にセット（ネイティブデータ更新を監視し、リアルタイムに画面に反映）
         Observable.collection(from: questionList).subscribe(onNext: { _ in
             self.tableView.reloadData()
         }).disposed(by: disposeBag)
         
+        // 左スワイプイベント処理登録
         let swipeL = UISwipeGestureRecognizer()
         swipeL.direction = .left
         swipeL.numberOfTouchesRequired = 1
         swipeL.addTarget(self, action: #selector(self.swipeLeft(sender:)))
         self.view.addGestureRecognizer(swipeL)
-        
+        // 右スワイプイベント処理登録
         let swipeR = UISwipeGestureRecognizer()
         swipeR.direction = .right
         swipeR.numberOfTouchesRequired = 1
@@ -67,6 +70,7 @@ class OthersQuestionsViewController: UITableViewController {
     //        return 120.0
     //    }
     
+    // ネイティブデータを各テーブル行にセット
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "othersQuestionCell", for: indexPath)
         
@@ -91,13 +95,17 @@ class OthersQuestionsViewController: UITableViewController {
         return cell
     }
     
+    // 行タップ時
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // セルの選択を解除
         tableView.deselectRow(at: indexPath, animated: true)
+        // 質問詳細画面へ遷移
         moveToDetailView(indexPath: indexPath)
     }
     
+    // 行をスワイプ時
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        // 「削除ボタン」タップ時
         if editingStyle == .delete {
             let questionId = questionList[indexPath.row].id
             let question = self.realm.objects(Question.self).filter("id == %@", questionId).first!
@@ -140,6 +148,7 @@ class OthersQuestionsViewController: UITableViewController {
     }
     
     func moveToDetailView(indexPath: IndexPath) {
+        // ネイティブデータの詳細確認フラグを更新
         let questionId = questionList[indexPath.row].id
         let question = self.realm.objects(Question.self).filter("id == %@", questionId).first!
         try! self.realm.write {

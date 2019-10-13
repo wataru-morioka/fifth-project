@@ -37,11 +37,14 @@ class DetailOthersQuestionViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // 質問詳細情報取得
         observableQuestion = self.realm.objects(Question.self).filter("id == %@", self.questionId!)
+        // 画面にセット（ネイティブデータ更新を監視し、リアルタイムに画面に反映）
         Observable.collection(from: observableQuestion).subscribe(onNext: { questions in
             self.setDisplay(questionDetail: questions.first!)
         }).disposed(by: disposeBag)
         
+        // 画面リアルタイム値とDB処理管理をviewModel側に移行
         let viewModel = DetailOthersQuestionViewModel(
             input: answerSegment.rx.value.asObservable().map{ $0 + 1 },
             serverQuestionId: observableQuestion.first!.serverQuestionId!
@@ -65,6 +68,7 @@ class DetailOthersQuestionViewController: UITableViewController {
             self.present(alert, animated: true, completion: nil)
         }).disposed(by: disposeBag)
         
+        // DB処理結果イベント取得
         viewModel.answerResult.subscribe(onNext: { result in
             self.indicator.stopAnimating()
             self.answerButton.isEnabled = true

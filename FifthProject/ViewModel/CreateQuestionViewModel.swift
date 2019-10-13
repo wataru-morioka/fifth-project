@@ -27,15 +27,11 @@ class CreateQuestionViewModel {
     let submitResult = PublishRelay<Bool>()
     var timePeriodArray = BehaviorRelay<[Int]>(value: ([Int])(1...60))
     
-    
-    let test = BehaviorRelay<Bool>(value: false)
-    let test2 = BehaviorRelay<Bool>(value: false)
-    let test3 = BehaviorRelay<Bool>(value: false)
-    
     let db = Firestore.firestore()
     let realm = try! Realm()
     
     init (input: (question: Observable<String>, answer1: Observable<String>, answer2: Observable<String>, targetNumber: Observable<Int>, timePeriod: Observable<Int>, timeUnit: Observable<String>)) {
+        // 画面リアルタイム値を各BehaviorRelayにバインド
         input.question.bind(to: insertQuestioin).disposed(by: disposeBag)
         input.answer1.bind(to: insertAnswer1).disposed(by: disposeBag)
         input.answer2.bind(to: insertAnswer2).disposed(by: disposeBag)
@@ -58,6 +54,7 @@ class CreateQuestionViewModel {
         .disposed(by: disposeBag)
     }
     
+    // 画面値が送信できる値がチェック
     func bindIsValid(inputArea: Observable<String>) {
         inputArea.flatMap{ i -> Observable<Bool> in
                 self.insertQuestioin.map{ q in self.checkInputString(inputString: q) }
@@ -69,6 +66,7 @@ class CreateQuestionViewModel {
             .disposed(by: disposeBag)
     }
     
+    // 空白文字以外存在するかチェック
     func checkInputString(inputString: String) -> Bool {
         let targetString = inputString.trimmingCharacters(in: .whitespacesAndNewlines)
         if targetString.count == 0 {
@@ -77,6 +75,7 @@ class CreateQuestionViewModel {
         return true
     }
     
+    // 質問送信
     func submitQuestion() {
         if !NetworkMonitoringService.isOnline {
             self.submitResult.accept(false)
@@ -97,7 +96,7 @@ class CreateQuestionViewModel {
         question.timeUnit = timeUnit.value
         question.createdDateTime = now
 
-        //Realm登録
+        // Realm登録
         var questionId: Int?
         try! self.realm.write {
             questionId = question.save()
@@ -105,7 +104,7 @@ class CreateQuestionViewModel {
         
         print("新規自分の質問登録完了")
         
-        //firebase登録
+        // firestore登録
         db.collection("questions").addDocument(data: [
             "uid": userId,
             "clientQuestionId": questionId!,
@@ -129,10 +128,14 @@ class CreateQuestionViewModel {
             if let error = error {
                 print("サーバエラー：自分の質問サーバに送信完了")
                 print(error)
+                
+                // view側にイベント送信
                 self.submitResult.accept(false)
                 return
             }
             print("自分の質問サーバに送信完了")
+            
+            // view側にイベント送信
             self.insertQuestioin.accept("")
             self.insertAnswer1.accept("")
             self.insertAnswer2.accept("")

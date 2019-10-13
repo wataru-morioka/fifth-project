@@ -24,16 +24,21 @@ class RegistrationViewModel {
     var token: String? = ""
     
     init (input: (region: Observable<String>, age: Observable<Int>)) {
+        // 初期値をセットしたBehaviorRelayを生成
         self.insertRegion = BehaviorRelay<String>(value: realm.objects(User.self).first?.region ?? Constant.regions[0])
         self.insertAge = BehaviorRelay<Int>(value: realm.objects(User.self).first?.age ?? Constant.ages[0])
         
+        // 画面変更値をBehaviorRelayにバインド
         input.region.bind(to: insertRegion).disposed(by: disposeBag)
         input.age.bind(to: insertAge).disposed(by: disposeBag)
         
+        // ブロードキャストされたトークンをキャッチするリスナー登録
         NotificationCenter.default.addObserver(self, selector: #selector(setToken), name: NSNotification.Name("getToken"), object: nil)
+        // トークン取得処理起動
         Common.getToken()
     }
     
+    // アカウント登録処理
     func registerUser() {
         if !NetworkMonitoringService.isOnline {
             self.registerResult.accept(false)
@@ -41,10 +46,9 @@ class RegistrationViewModel {
         }
         
         let userId = Constant.uid
-        
         let now = Common.getNowStringFormat()
         
-        //firebase登録
+        // firestore登録
         db.collection("users").document(userId).setData([
             "uid": userId,
             "region": insertRegion.value,
@@ -67,10 +71,12 @@ class RegistrationViewModel {
             user.age = self.insertAge.value
             user.createdDateTime = Common.getNowStringFormat()
             
-            //Realm登録
+            // Realm登録
             try! self.realm.write {
                 self.realm.add(user)
             }
+            
+            // view側にイベント送信
             self.registerResult.accept(true)
         }
     }
@@ -92,7 +98,7 @@ class RegistrationViewModel {
         let now = Common.getNowStringFormat()
         let userId = Constant.uid
         
-        //firebase登録
+        // firestore登録
         db.collection("users").document(userId).updateData([
             "region": insertRegion.value,
             "age": insertAge.value,
@@ -113,6 +119,8 @@ class RegistrationViewModel {
                 myInfo.modifiedDateTime = now
             }
             print("ユーザ情報更新完了")
+            
+            // view側にイベント送信
             self.updateResult.accept(true)
         }
         
