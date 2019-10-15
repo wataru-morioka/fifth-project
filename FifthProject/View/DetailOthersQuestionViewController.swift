@@ -60,6 +60,8 @@ class DetailOthersQuestionViewController: UITableViewController {
             let ok = UIAlertAction(title: "Yes", style: UIAlertAction.Style.default ) { (action: UIAlertAction) in
                 self.indicator.startAnimating()
                 self.answerButton.isEnabled = false
+                
+                // サーバに回答送信
                 viewModel.answer()
             }
             let ng = UIAlertAction(title: "No", style: UIAlertAction.Style.cancel, handler: nil)
@@ -106,6 +108,10 @@ class DetailOthersQuestionViewController: UITableViewController {
         
         if questionDetail.decision == 0 && Date() > timeLimit {
             yourChoiceLabel.text = "Over..."
+        }
+        
+        if questionDetail.decision != 0 {
+            answerSegment.selectedSegmentIndex = questionDetail.decision - 1
         }
         
         if !questionDetail.determinationFlag {
